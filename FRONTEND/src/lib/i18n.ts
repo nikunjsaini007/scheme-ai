@@ -17,7 +17,7 @@ const hi: Record<string, string> = {
   "Explore schemes": "योजनाएँ देखें",
 
   // Hero
-  "Government scheme discovery — India ·": "सरकारी योजना खोज — भारत ·",
+  "Government scheme discovery": "सरकारी योजना खोज",
   "Find the": "खोजिए",
   "Benefits": "लाभ",
   "you deserve.": "जो आपके लिए हैं।",

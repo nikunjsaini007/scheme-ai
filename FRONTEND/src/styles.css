@@ -20,13 +20,41 @@
   font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: 0.86;
+  line-height: 0.93 !important;
   text-transform: uppercase;
+}
+
+.hero-benefit {
+  position: relative;
+  display: inline-block;
+  color: var(--color-saffron);
+  background: none;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  animation: none;
+}
+
+@keyframes benefit-glow {
+  from {
+    filter: drop-shadow(0 0 0 color-mix(in oklab, var(--color-saffron) 0%, transparent));
+  }
+  to {
+    filter: drop-shadow(0 0 12px color-mix(in oklab, var(--color-saffron) 42%, transparent));
+  }
 }
 
 html:lang(hi) .display {
   letter-spacing: 0;
-  line-height: 1.05;
+  line-height: 1.12 !important;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.08;
+  }
 }
 
 @utility edge {
@@ -192,6 +220,17 @@ html:lang(hi) .display {
 }
 
 @layer base {
+  a,
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   * {
     border-color: var(--color-border);
   }

@@ -4,8 +4,8 @@ import { LineReveal, Reveal, SectionLabel } from "@/components/motion-primitives
 import { demoPersona, schemes } from "@/data/schemes";
 import { useProfile } from "@/store/useProfile";
 import { useT } from "@/lib/i18n";
-import farmer from "@/assets/farmer.jpg";
-import family from "@/assets/family-home.jpg";
+import farmer from "@/assets/for-schemes/farmer.jpg";
+import family from "@/assets/for-schemes/family-home.jpg";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 

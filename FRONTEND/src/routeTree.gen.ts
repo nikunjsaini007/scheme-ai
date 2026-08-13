@@ -10,11 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ApplyRouteImport } from './routes/apply'
+import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as RecommendationsRouteImport } from './routes/recommendations'
+import { Route as SavedRouteImport } from './routes/saved'
+import { Route as SchemesRouteImport } from './routes/schemes'
 import { Route as SchemeIdRouteImport } from './routes/scheme.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PersonalizeRoute = PersonalizeRouteImport.update({
+  id: '/personalize',
+  path: '/personalize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecommendationsRoute = RecommendationsRouteImport.update({
+  id: '/recommendations',
+  path: '/recommendations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRoute = SavedRouteImport.update({
+  id: '/saved',
+  path: '/saved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchemesRoute = SchemesRouteImport.update({
+  id: '/schemes',
+  path: '/schemes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SchemeIdRoute = SchemeIdRouteImport.update({
@@ -25,27 +67,83 @@ const SchemeIdRoute = SchemeIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
+  '/assistant': typeof AssistantRoute
+  '/personalize': typeof PersonalizeRoute
+  '/recommendations': typeof RecommendationsRoute
+  '/saved': typeof SavedRoute
+  '/schemes': typeof SchemesRoute
   '/scheme/$id': typeof SchemeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
+  '/assistant': typeof AssistantRoute
+  '/personalize': typeof PersonalizeRoute
+  '/recommendations': typeof RecommendationsRoute
+  '/saved': typeof SavedRoute
+  '/schemes': typeof SchemesRoute
   '/scheme/$id': typeof SchemeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
+  '/assistant': typeof AssistantRoute
+  '/personalize': typeof PersonalizeRoute
+  '/recommendations': typeof RecommendationsRoute
+  '/saved': typeof SavedRoute
+  '/schemes': typeof SchemesRoute
   '/scheme/$id': typeof SchemeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/scheme/$id'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/apply'
+    | '/assistant'
+    | '/personalize'
+    | '/recommendations'
+    | '/saved'
+    | '/schemes'
+    | '/scheme/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/scheme/$id'
-  id: '__root__' | '/' | '/scheme/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/apply'
+    | '/assistant'
+    | '/personalize'
+    | '/recommendations'
+    | '/saved'
+    | '/schemes'
+    | '/scheme/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/apply'
+    | '/assistant'
+    | '/personalize'
+    | '/recommendations'
+    | '/saved'
+    | '/schemes'
+    | '/scheme/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  ApplyRoute: typeof ApplyRoute
+  AssistantRoute: typeof AssistantRoute
+  PersonalizeRoute: typeof PersonalizeRoute
+  RecommendationsRoute: typeof RecommendationsRoute
+  SavedRoute: typeof SavedRoute
+  SchemesRoute: typeof SchemesRoute
   SchemeIdRoute: typeof SchemeIdRoute
 }
 
@@ -56,6 +154,55 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/personalize': {
+      id: '/personalize'
+      path: '/personalize'
+      fullPath: '/personalize'
+      preLoaderRoute: typeof PersonalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recommendations': {
+      id: '/recommendations'
+      path: '/recommendations'
+      fullPath: '/recommendations'
+      preLoaderRoute: typeof RecommendationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved': {
+      id: '/saved'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schemes': {
+      id: '/schemes'
+      path: '/schemes'
+      fullPath: '/schemes'
+      preLoaderRoute: typeof SchemesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/scheme/$id': {
@@ -70,6 +217,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  ApplyRoute: ApplyRoute,
+  AssistantRoute: AssistantRoute,
+  PersonalizeRoute: PersonalizeRoute,
+  RecommendationsRoute: RecommendationsRoute,
+  SavedRoute: SavedRoute,
+  SchemesRoute: SchemesRoute,
   SchemeIdRoute: SchemeIdRoute,
 }
 export const routeTree = rootRouteImport

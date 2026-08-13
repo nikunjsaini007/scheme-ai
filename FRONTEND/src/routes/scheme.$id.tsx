@@ -44,7 +44,7 @@ function SchemeDetail() {
 
       <section className="edge pt-32 pb-16 md:pt-44">
         <Reveal>
-          <Link to="/" className="eyebrow text-ink/40 hover:text-saffron">
+          <Link to="/schemes" className="eyebrow text-ink/40 hover:text-saffron">
             {t("← All schemes")}
           </Link>
         </Reveal>
@@ -54,6 +54,7 @@ function SchemeDetail() {
               <span className="eyebrow text-saffron">{scheme.match}% {t("match")}</span>
               <span className="eyebrow text-ink/40">{t(scheme.level)}</span>
               <span className="eyebrow text-ink/40">{t(scheme.category)}</span>
+              {scheme.year && <span className="eyebrow text-ink/40">{scheme.year} · {t(scheme.status ?? "ACTIVE")}</span>}
             </div>
             <LineReveal
               as="h1"

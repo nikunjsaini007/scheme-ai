@@ -1,10 +1,11 @@
 import { LineReveal, Reveal } from "@/components/motion-primitives";
+import { Link } from "@tanstack/react-router";
 import { useT } from "@/lib/i18n";
 import { useLang } from "@/store/useLang";
 
 const COLS = [
-  { title: "Product", links: ["Discover Schemes", "Eligibility Check", "AI Assistant", "Benefits"] },
-  { title: "Company", links: ["About", "Privacy", "Terms", "Accessibility"] },
+  { title: "Product", links: [{ label: "Discover Schemes", to: "/schemes" }, { label: "Eligibility Check", to: "/personalize" }, { label: "AI Assistant", to: "/assistant" }, { label: "Saved Schemes", to: "/saved" }] },
+  { title: "Company", links: [{ label: "About", to: "/about" }, { label: "Privacy", to: "/about" }, { label: "Terms", to: "/about" }, { label: "Accessibility", to: "/about" }] },
 ];
 
 export function Footer() {
@@ -36,10 +37,8 @@ export function Footer() {
               <p className="eyebrow text-ivory/35">{t(c.title)}</p>
               <ul className="mt-5 space-y-2.5">
                 {c.links.map((l) => (
-                  <li key={l}>
-                    <a href="#discover" className="text-sm text-ivory/70 transition-colors hover:text-saffron">
-                      {t(l)}
-                    </a>
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-sm text-ivory/70 transition-colors hover:text-saffron">{t(l.label)}</Link>
                   </li>
                 ))}
               </ul>

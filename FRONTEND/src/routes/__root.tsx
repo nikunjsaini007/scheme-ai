@@ -74,14 +74,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Yojantra — Discover the benefits meant for you" },
+      { title: "Yojantra" },
       {
         name: "description",
         content:
           "India has thousands of government schemes. Yojantra helps you find the ones you can actually benefit from.",
       },
       { name: "author", content: "Yojantra" },
-      { property: "og:title", content: "Yojantra — Discover the benefits meant for you" },
+      { property: "og:title", content: "Yojantra" },
       {
         property: "og:description",
         content: "AI-powered discovery of Indian government schemes, eligibility and benefits.",
