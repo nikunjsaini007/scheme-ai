@@ -11,6 +11,7 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { useLang } from "@/store/useLang";
+import { LatestSchemesTicker } from "@/components/LatestSchemesTicker";
 
 function NotFoundComponent() {
   return (
@@ -116,7 +117,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="has-latest-ticker">
         {children}
         <Scripts />
       </body>
@@ -131,6 +132,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <LatestSchemesTicker />
     </QueryClientProvider>
   );
 }

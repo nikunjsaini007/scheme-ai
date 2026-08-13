@@ -13,7 +13,7 @@ export type LatestSchemeItem = {
 const DEFAULT_ITEMS: LatestSchemeItem[] = [
   { id: "pm-kisan", name: "PM-KISAN", detail: "₹6,000/year" },
   { id: "ayushman-bharat", name: "Ayushman Bharat", detail: "₹5 lakh health cover" },
-  { id: "pm-vishwakarma", name: "PM Vishwakarma", detail: "Training + financial support" },
+  { id: "pm-vishwakarma-2027-window", name: "PM Vishwakarma", detail: "Training + financial support" },
   { id: "pmay", name: "PM Awas Yojana", detail: "Housing assistance" },
   { id: "post-matric-scholarship", name: "National Scholarship", detail: "Student benefits" },
 ];
@@ -30,6 +30,7 @@ export function LatestSchemesTicker({
   return (
     <nav
       aria-label={t("LATEST SCHEMES")}
+      aria-live="off"
       className={cn(
         "fixed bottom-4 left-1/2 z-[70] w-[calc(100%-20px)] max-w-[1200px] -translate-x-1/2 md:w-[88%]",
         className,
@@ -47,7 +48,7 @@ export function LatestSchemesTicker({
         </div>
         <span className="h-5 w-px shrink-0 bg-white/10 md:h-6" aria-hidden="true" />
 
-        <div className="ticker-viewport min-w-0 flex-1">
+        <div className="ticker-viewport min-w-0 flex-1" aria-label={t("Latest scheme updates")}>
           <div className="ticker-track flex w-max items-center">
             {[0, 1].map((copy) => (
               <ul key={copy} className="flex shrink-0 items-center" aria-hidden={copy === 1}>
