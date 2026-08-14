@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Check, RotateCcw, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { Footer } from "@/components/Footer";
@@ -8,15 +8,21 @@ import { LineReveal, Reveal } from "@/components/motion-primitives";
 import { useT } from "@/lib/i18n";
 import { useProfile } from "@/store/useProfile";
 import { cn } from "@/lib/utils";
+import { getUser, updateProfile } from "@/lib/auth";
+import { requireAuth } from "@/components/AuthGuard";
+import { fetchUserProfile, generateRecommendations } from "@/lib/schemeCatalog";
 
 const QUESTIONS = [
   { title: "Which age group are you in?", key: "AGE", options: ["18–25", "26–40", "41–60", "60+"] },
   { title: "What best describes your situation?", key: "OCCUPATION", options: ["Student", "Farmer", "Unemployed", "Entrepreneur", "Job Seeker", "Salaried", "Homemaker", "Retired"] },
+  { title: "Which state or union territory do you live in?", key: "STATE", options: ["Haryana", "Maharashtra", "Kerala", "Tamil Nadu", "Uttar Pradesh", "West Bengal", "Gujarat", "Other"] },
   { title: "What kind of support are you looking for?", key: "CATEGORY", options: ["Education", "Healthcare", "Housing", "Employment", "Agriculture", "Business", "Women & Child", "Social Security"] },
   { title: "What is your family's annual income?", key: "ANNUAL FAMILY INCOME", options: ["Below ₹2L", "₹2L – ₹5L", "₹5L – ₹10L", "Above ₹10L"] },
 ] as const;
+const incomeValue = (value: string) => value.includes("Below") ? 100000 : value.includes("2L") && value.includes("5L") ? 350000 : value.includes("5L") && value.includes("10L") ? 750000 : value.includes("Above") ? 1000000 : Number(value) || null;
 
 export const Route = createFileRoute("/personalize")({
+  beforeLoad: requireAuth,
   head: () => ({ title: "Personalize – Yojantra", description: "Tell us about yourself to find government schemes you qualify for" }),
   component: Personalize,
 });
@@ -26,19 +32,61 @@ function Personalize() {
   const { t } = useT();
   const { answers, stage, answer, setPersona, setStage, reset } = useProfile();
   const [question, setQuestion] = useState(0);
+  const [saving, setSaving] = useState(false);
   const current = QUESTIONS[question]!;
   const selected = answers[current.key];
   const complete = stage === "done";
   const progress = complete ? 1 : (question + (selected ? 1 : 0)) / QUESTIONS.length;
+
+  useEffect(() => {
+    const user = getUser();
+    if (!user) return;
+    void fetchUserProfile(user.id).then((profile) => {
+      const savedAnswers: Record<string, string> = {
+        AGE: String(profile.age || ""),
+        OCCUPATION: String(profile.occupation || ""),
+        STATE: String(profile.state || ""),
+        CATEGORY: String(profile.category || ""),
+        "ANNUAL FAMILY INCOME": String(profile.annual_income || ""),
+      };
+      Object.entries(savedAnswers).forEach(([key, value]) => { if (value) answer(key, value); });
+      if (savedAnswers.OCCUPATION) setPersona(savedAnswers.OCCUPATION.toUpperCase());
+    }).catch(() => undefined);
+  }, [answer, setPersona]);
 
   const choose = (value: string) => {
     answer(current.key, value);
     if (current.key === "OCCUPATION") setPersona(value.toUpperCase());
   };
 
-  const next = () => {
+  const next = async () => {
     if (question < QUESTIONS.length - 1) setQuestion((value) => value + 1);
-    else setStage("done");
+    else {
+      const user = getUser();
+      if (user) {
+        setSaving(true);
+        try {
+          const latestAnswers = { ...answers, [current.key]: selected || "" };
+          const savedProfile = {
+            ...user,
+            age: Number.parseInt(latestAnswers.AGE || "", 10) || null,
+            occupation: latestAnswers.OCCUPATION || "",
+            annual_income: incomeValue(latestAnswers["ANNUAL FAMILY INCOME"] || ""),
+            category: user.category || "",
+            state: latestAnswers.STATE || "",
+            is_student: (latestAnswers.OCCUPATION || "").toLowerCase() === "student",
+          };
+          await updateProfile(savedProfile);
+          await fetchUserProfile(user.id);
+          setStage("matching");
+          await generateRecommendations();
+          await router.navigate({ to: "/recommendations" });
+        } finally {
+          setSaving(false);
+        }
+      }
+      if (!user) setStage("done");
+    }
   };
 
   if (complete) {
@@ -82,7 +130,7 @@ function Personalize() {
             <motion.div key={current.key} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45 }} className="rounded-2xl bg-white p-6 text-ink shadow-[0_20px_70px_-35px_rgba(17,17,17,.35)] sm:p-9">
               <p className="eyebrow text-saffron">{t("Tell us about you")}</p><h2 className="display mt-5 max-w-lg text-4xl leading-[0.92] sm:text-6xl">{t(current.title)}</h2>
               <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">{current.options.map((option) => <button key={option} onClick={() => choose(option)} className={cn("group flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 text-left text-sm transition-all hover:-translate-y-0.5 hover:border-saffron hover:bg-saffron hover:text-white", selected === option && "border-saffron bg-saffron text-white")}><span>{t(option)}</span><span className={cn("grid size-5 place-items-center rounded-full border border-ink/20", selected === option && "border-white bg-white/20")}>{selected === option && <Check className="size-3" />}</span></button>)}</div>
-              <div className="mt-10 flex items-center justify-between border-t border-ink/10 pt-6"><button disabled={question === 0} onClick={() => setQuestion((value) => Math.max(0, value - 1))} className="eyebrow text-ink/40 transition-colors hover:text-ink disabled:opacity-30">{t("← Back")}</button><button disabled={!selected} onClick={next} className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[10px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron disabled:opacity-30">{question === QUESTIONS.length - 1 ? t("See my matches") : t("Continue")} <ArrowRight className="size-3.5" /></button></div>
+              <div className="mt-10 flex items-center justify-between border-t border-ink/10 pt-6"><button disabled={question === 0 || saving} onClick={() => setQuestion((value) => Math.max(0, value - 1))} className="eyebrow text-ink/40 transition-colors hover:text-ink disabled:opacity-30">{t("← Back")}</button><button disabled={!selected || saving} onClick={() => void next()} className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[10px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron disabled:opacity-30">{saving ? "Saving…" : question === QUESTIONS.length - 1 ? t("See my matches") : t("Continue")} <ArrowRight className="size-3.5" /></button></div>
             </motion.div>
           </div>
         </div>

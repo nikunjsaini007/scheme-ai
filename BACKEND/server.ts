@@ -1,3 +1,16 @@
+// Load private server environment variables without exposing them to the client bundle.
+// Node's native loader reads .env.local first, then .env for local development.
+try {
+  process.loadEnvFile?.(".env.local");
+} catch {
+  // .env.local is optional.
+}
+try {
+  process.loadEnvFile?.(".env");
+} catch {
+  // .env is optional in deployments that inject environment variables directly.
+}
+
 import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";

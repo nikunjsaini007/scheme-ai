@@ -8,8 +8,10 @@ import { schemes } from "@/data/schemes";
 import { cn } from "@/lib/utils";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { requireAuth } from "@/components/AuthGuard";
 
 export const Route = createFileRoute("/saved")({
+  beforeLoad: requireAuth,
   head: () => ({
     title: "Saved Schemes – Yojantra",
     description: "Your bookmarked government schemes",

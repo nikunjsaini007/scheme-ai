@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { LineReveal, MagneticButton, Reveal } from "@/components/motion-primitives";
+import { LineReveal, MagneticButton, Reveal, SectionLabel } from "@/components/motion-primitives";
 import { useProfile } from "@/store/useProfile";
 import { useT } from "@/lib/i18n";
 import { Link } from "@tanstack/react-router";
@@ -53,6 +53,7 @@ export function Hero() {
       />
 
       <div className="edge relative grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-6">
+       
         <motion.div style={{ y: headY }} className="lg:col-span-7 lg:pt-6">
           <Reveal delay={0.1}>
             <p className="eyebrow mb-8 text-ink/45">
@@ -82,15 +83,7 @@ export function Hero() {
             <Link to="/schemes" className="rounded-full border border-ink/25 px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-saffron hover:text-saffron">
               {t("Explore schemes")}
             </Link>
-            <button
-              onClick={() => {
-                runDemo();
-                document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="eyebrow ml-1 border-b border-ink/30 pb-1 text-ink/60 transition-colors hover:border-saffron hover:text-saffron"
-            >
-              {t("Try demo")}
-            </button>
+  
           </Reveal>
         </motion.div>
 

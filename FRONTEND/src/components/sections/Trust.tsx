@@ -17,7 +17,7 @@ export function Trust() {
     <section className="bg-ivory-deep py-28 md:py-40">
       <div className="edge grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-6">
-          <SectionLabel index="10" title={t("Trust")} />
+          <SectionLabel index="02" title={t("Trust")} />
           <LineReveal
             className="display text-[11vw] leading-[0.86] md:text-[5.2vw]"
             lines={[t("We help you find."), <span key="g" className="text-saffron">{t("The government provides.")}</span>]}

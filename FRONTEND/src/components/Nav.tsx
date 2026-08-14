@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
-import { Menu, Mic, X } from "lucide-react";
+import { Menu, Mic, X, UserRound } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { useLang } from "@/store/useLang";
 import govtOfIndia from "@/assets/govt-of-india.png";
+import { getUser, signOut } from "@/lib/auth";
 
 const LINKS = [
   { label: "HOME", to: "/" },
@@ -24,6 +25,7 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const dark = darkProp;
+  const user = getUser();
   const fixed = solid || location.pathname === "/personalize";
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setSolid(v > 40));
@@ -81,6 +83,7 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
             >
               {t("Check eligibility")}
             </Link>
+            {user ? <><Link to="/dashboard" className={cn("eyebrow flex items-center gap-2", dark ? "text-ivory/75" : "text-ink/70")}><UserRound className="size-4 text-saffron" /> {user.full_name.split(" ")[0]}</Link><button onClick={() => { signOut(); window.location.reload(); }} className={cn("eyebrow", dark ? "text-ivory/65" : "text-ink/60")}>LOG OUT</button></> : <Link to="/login" search={{ redirect: "/dashboard" }} className="eyebrow text-saffron">LOGIN / CREATE ACCOUNT</Link>}
           </div>
 
           <button onClick={() => setOpen(true)} className="lg:hidden" aria-label="Open menu">

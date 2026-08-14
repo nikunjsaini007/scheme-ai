@@ -2,8 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MobileStickyCta, Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/sections/Hero";
-import { WhoAreYou } from "@/components/sections/WhoAreYou";
-import { Results } from "@/components/sections/Results";
+import { PublicSchemes } from "@/components/sections/PublicSchemes";
 import { Trust } from "@/components/sections/Trust";
 
 export const Route = createFileRoute("/")({
@@ -30,8 +29,7 @@ function Index() {
     <main className="overflow-x-hidden bg-ivory text-ink">
       <Nav />
       <Hero />
-      <WhoAreYou />
-      <Results />
+      <PublicSchemes />
       <Trust />
       <Footer />
       <MobileStickyCta />

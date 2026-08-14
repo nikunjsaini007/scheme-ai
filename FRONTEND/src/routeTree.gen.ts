@@ -13,7 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as DocumentsRouteImport } from './routes/documents'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RecommendationsRouteImport } from './routes/recommendations'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SchemesRouteImport } from './routes/schemes'
@@ -39,9 +43,29 @@ const AssistantRoute = AssistantRouteImport.update({
   path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentsRoute = DocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PersonalizeRoute = PersonalizeRouteImport.update({
   id: '/personalize',
   path: '/personalize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecommendationsRoute = RecommendationsRouteImport.update({
@@ -70,7 +94,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/documents': typeof DocumentsRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
+  '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
   '/saved': typeof SavedRoute
   '/schemes': typeof SchemesRoute
@@ -81,7 +109,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/documents': typeof DocumentsRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
+  '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
   '/saved': typeof SavedRoute
   '/schemes': typeof SchemesRoute
@@ -93,7 +125,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/assistant': typeof AssistantRoute
+  '/dashboard': typeof DashboardRoute
+  '/documents': typeof DocumentsRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
+  '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
   '/saved': typeof SavedRoute
   '/schemes': typeof SchemesRoute
@@ -106,7 +142,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/apply'
     | '/assistant'
+    | '/dashboard'
+    | '/documents'
+    | '/login'
     | '/personalize'
+    | '/profile'
     | '/recommendations'
     | '/saved'
     | '/schemes'
@@ -117,7 +157,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/apply'
     | '/assistant'
+    | '/dashboard'
+    | '/documents'
+    | '/login'
     | '/personalize'
+    | '/profile'
     | '/recommendations'
     | '/saved'
     | '/schemes'
@@ -128,7 +172,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/apply'
     | '/assistant'
+    | '/dashboard'
+    | '/documents'
+    | '/login'
     | '/personalize'
+    | '/profile'
     | '/recommendations'
     | '/saved'
     | '/schemes'
@@ -140,7 +188,11 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ApplyRoute: typeof ApplyRoute
   AssistantRoute: typeof AssistantRoute
+  DashboardRoute: typeof DashboardRoute
+  DocumentsRoute: typeof DocumentsRoute
+  LoginRoute: typeof LoginRoute
   PersonalizeRoute: typeof PersonalizeRoute
+  ProfileRoute: typeof ProfileRoute
   RecommendationsRoute: typeof RecommendationsRoute
   SavedRoute: typeof SavedRoute
   SchemesRoute: typeof SchemesRoute
@@ -177,11 +229,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof DocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/personalize': {
       id: '/personalize'
       path: '/personalize'
       fullPath: '/personalize'
       preLoaderRoute: typeof PersonalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recommendations': {
@@ -220,7 +300,11 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ApplyRoute: ApplyRoute,
   AssistantRoute: AssistantRoute,
+  DashboardRoute: DashboardRoute,
+  DocumentsRoute: DocumentsRoute,
+  LoginRoute: LoginRoute,
   PersonalizeRoute: PersonalizeRoute,
+  ProfileRoute: ProfileRoute,
   RecommendationsRoute: RecommendationsRoute,
   SavedRoute: SavedRoute,
   SchemesRoute: SchemesRoute,
