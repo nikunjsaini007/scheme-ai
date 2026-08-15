@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import { ArrowRight, ChevronRight, Mic, RotateCcw, Send, Sparkles, UserRound } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Footer } from "@/components/Footer";
@@ -35,7 +35,28 @@ function Assistant() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [typing, setTyping] = useState(false);
 
-  const ask = async (question: string) => {
+  // Voice assistant states
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<any | null>(null);
+  const [speakResponses, setSpeakResponses] = useState(true);
+  const [speaking, setSpeaking] = useState(false);
+
+  const speakText = (text: string) => {
+    try {
+      if (!speakResponses) return;
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-IN';
+      utter.onstart = () => setSpeaking(true);
+      utter.onend = () => setSpeaking(false);
+      window.speechSynthesis.speak(utter);
+    } catch {
+      // silently fail; keep text assistant working
+    }
+  };
+
+  const ask = async (question: string, optSpeak = true) => {
     if (!question.trim() || typing) return;
     const clean = question.trim();
     setMessages((items) => [...items, { id: Date.now(), text: clean, user: true }]);
@@ -63,18 +84,18 @@ function Assistant() {
         },
       });
       setMessages((items) => [...items, { id: Date.now() + 1, text, user: false }]);
+      if (optSpeak) speakText(text);
     } catch (error) {
+      const errText = error instanceof Error ? error.message : "Antra is temporarily unavailable. Please try again later.";
       setMessages((items) => [
         ...items,
         {
           id: Date.now() + 1,
-          text:
-            error instanceof Error
-              ? error.message
-              : "Antra is temporarily unavailable. Please try again later.",
+          text: errText,
           user: false,
         },
       ]);
+      // Do not attempt to speak errors
     } finally {
       setTyping(false);
     }
@@ -83,6 +104,47 @@ function Assistant() {
   const send = (event: FormEvent) => {
     event.preventDefault();
     ask(input);
+  };
+
+  const startListening = () => {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      alert(t("Voice input isn't supported in this browser."));
+      return;
+    }
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch {}
+      recognitionRef.current = null;
+    }
+    const recog = new SR();
+    recog.lang = 'en-IN';
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
+    recog.onresult = (ev: any) => {
+      const transcript = Array.from(ev.results).map((r: any) => r[0].transcript).join(' ').trim();
+      if (transcript) {
+        ask(transcript, true);
+      }
+    };
+    recog.onend = () => {
+      setListening(false);
+      recognitionRef.current = null;
+    };
+    recog.onerror = () => {
+      setListening(false);
+      recognitionRef.current = null;
+    };
+    recognitionRef.current = recog;
+    setListening(true);
+    recog.start();
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch {}
+      recognitionRef.current = null;
+    }
+    setListening(false);
   };
 
   return (
@@ -166,7 +228,7 @@ function Assistant() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{t("Antra")}</p>
-                    <p className="eyebrow text-ink/40">{t("Government scheme assistant")}</p>
+                    
                   </div>
                 </div>
                 <button
@@ -269,13 +331,26 @@ function Assistant() {
                     placeholder={t("Type your question…")}
                     className="min-w-0 flex-1 rounded-full border border-ink/15 bg-ivory px-4 py-3 text-sm outline-none placeholder:text-ink/30 focus:border-saffron"
                   />
-                  <button
-                    type="button"
-                    className="hidden size-10 place-items-center rounded-full border border-ink/15 text-ink/40 hover:border-saffron hover:text-saffron sm:grid"
-                    aria-label={t("Voice input")}
-                  >
-                    <Mic className="size-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => (listening ? stopListening() : startListening())}
+                      className={`size-10 place-items-center rounded-full border border-ink/15 ${listening ? 'bg-saffron text-white' : 'text-ink/40'} hover:border-saffron hover:text-saffron sm:grid`}
+                      aria-label={t("Voice input")}
+                    >
+                      <Mic className="size-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSpeakResponses((s) => !s)}
+                      title={speakResponses ? t("Speak responses: on") : t("Speak responses: off")}
+                      className="size-10 place-items-center rounded-full border border-ink/15 text-ink/40 hover:border-saffron hover:text-saffron"
+                    >
+                      {speakResponses ? "🔊" : "🔈"}
+                    </button>
+                  </div>
+
                   <button
                     type="submit"
                     className="grid size-11 shrink-0 place-items-center rounded-full bg-saffron text-white hover:bg-ink"

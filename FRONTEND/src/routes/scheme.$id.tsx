@@ -70,12 +70,64 @@ function SchemeDetail() {
             <div className="bg-ink p-8 text-ivory md:p-10">
               <p className="display text-[18vw] leading-none text-saffron lg:text-[7vw]">{scheme.benefit}</p>
               <p className="eyebrow mt-4 text-ivory/45">{t(scheme.benefitNote)}</p>
+
+              {/* Conservative benefit calculator: show only when a rupee amount is present in the published benefit string. Do not invent amounts or formulas. */}
+              {(() => {
+                const parseRupee = (s?: string) => {
+                  if (!s) return null;
+                  const cleaned = s.replace(/,/g, "").trim();
+                  // Match patterns like: ₹50000, ₹2.67L, 2.67L, 50000
+                  const rupeeMatch = cleaned.match(/₹\s*([0-9,.\s]+)\s*([kKmMlL]?)/);
+                  if (rupeeMatch) {
+                    const num = Number(rupeeMatch[1].replace(/\s+/g, ""));
+                    const suffix = (rupeeMatch[2] || "").toLowerCase();
+                    if (isNaN(num)) return null;
+                    if (suffix === "l") return Math.round(num * 100000);
+                    if (suffix === "m") return Math.round(num * 1000000);
+                    if (suffix === "k") return Math.round(num * 1000);
+                    return Math.round(num);
+                  }
+                  // Match forms like '2.67L' or '2.67 L'
+                  const altMatch = cleaned.match(/^([0-9.]+)\s*(lakh|l|k|m)?$/i);
+                  if (altMatch) {
+                    const num = Number(altMatch[1]);
+                    const suffix = (altMatch[2] || "").toLowerCase();
+                    if (isNaN(num)) return null;
+                    if (suffix === "l" || suffix === "lakh") return Math.round(num * 100000);
+                    if (suffix === "m") return Math.round(num * 1000000);
+                    if (suffix === "k") return Math.round(num * 1000);
+                    return Math.round(num);
+                  }
+                  return null;
+                };
+                const amount = parseRupee(scheme.benefit as string | undefined);
+                if (amount) {
+                  return (
+                    <div className="mt-6">
+                      <p className="eyebrow text-ivory/45">{t("Estimated benefit")}</p>
+                      <p className="display mt-2 text-2xl">₹{amount.toLocaleString("en-IN")}{scheme.benefitNote ? ` · ${t(scheme.benefitNote)}` : ""}</p>
+                    </div>
+                  );
+                }
+                // If the scheme mentions percentages or conditional benefits, be explicit that calculation is not possible here.
+                if (String(scheme.benefit || "").includes("%") || String(scheme.benefit || "").toLowerCase().includes("subsidy")) {
+                  return (
+                    <div className="mt-6">
+                      <p className="eyebrow text-ivory/45">{t("Benefit calculation")}</p>
+                      <p className="mt-2 text-sm text-ivory/65">{t("Benefit depends on application assessment.")}</p>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {scheme.deadlineDays && (
                 <div className="mt-8 flex items-baseline justify-between border-t border-ivory/15 pt-6">
                   <span className="eyebrow text-ivory/45">{t("Deadline")}</span>
                   <span className="display text-3xl">{scheme.deadlineDays} {t("days")}</span>
                 </div>
               )}
+
               <a
                 href="#apply"
                 className="mt-8 flex items-center justify-center gap-3 rounded-full bg-saffron px-6 py-4 text-[11px] font-semibold tracking-[0.16em] text-white uppercase transition-colors hover:bg-ivory hover:text-ink"

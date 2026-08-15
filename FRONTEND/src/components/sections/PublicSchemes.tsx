@@ -24,7 +24,7 @@ export function PublicSchemes() {
       <SectionLabel index="01" title="Public scheme discovery" />
       <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
         <div className="lg:col-span-7">
-          <LineReveal className="display text-[14vw] leading-[0.86] md:text-[7vw]" lines={["Explore Current", "Government Schemes 🇮🇳"]} />
+          <LineReveal className="display text-[14vw] leading-[0.86] md:text-[7vw]" lines={["Explore Current", "Government Schemes"]} />
           <Reveal delay={0.2}>
             <p className="mt-7 max-w-lg text-sm leading-relaxed text-ink/60">
               Discover currently available government schemes and benefits across India.

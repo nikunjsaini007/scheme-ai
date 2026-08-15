@@ -4,7 +4,7 @@ import { Nav } from "@/components/Nav";
 import { getUser, profileCompletion, signOut } from "@/lib/auth";
 import { requireAuth } from "@/components/AuthGuard";
 import { listDocuments } from "@/lib/documents";
-import { fetchUserProfile } from "@/lib/schemeCatalog";
+import { fetchUserProfile, fetchActiveSchemes, fetchRecommendations } from "@/lib/schemeCatalog";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/dashboard")({
@@ -17,10 +17,31 @@ function Dashboard() {
   const navigate = useNavigate();
   const [documents, setDocuments] = useState<{ status: string }[]>([]);
   const [profile, setProfile] = useState<Record<string, unknown>>({ ...user });
+  const [schemesCount, setSchemesCount] = useState<number | null>(null);
+  const [recommendationsCount, setRecommendationsCount] = useState<number | null>(null);
+  const [savedCount, setSavedCount] = useState<number | null>(null);
 
   useEffect(() => {
     void listDocuments(user.id).then(setDocuments);
     void fetchUserProfile(user.id).then(setProfile).catch(() => setProfile({ ...user }));
+
+    // Fetch active schemes count (real data) — show nothing if unavailable
+    void fetchActiveSchemes()
+      .then((s) => setSchemesCount(Array.isArray(s) ? s.length : null))
+      .catch(() => setSchemesCount(null));
+
+    // Fetch recommendation count for this user — if available
+    void fetchRecommendations(user.id)
+      .then((recs) => setRecommendationsCount(Array.isArray(recs) ? recs.length : 0))
+      .catch(() => setRecommendationsCount(null));
+
+    // Read saved schemes from localStorage (client-side persisted bookmarks)
+    try {
+      const savedIds = JSON.parse(localStorage.getItem("savedSchemeIds") || "[]");
+      setSavedCount(Array.isArray(savedIds) ? savedIds.length : 0);
+    } catch {
+      setSavedCount(null);
+    }
   }, [user.id]);
 
   const logout = () => {
@@ -49,7 +70,7 @@ function Dashboard() {
           </button>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat icon={<Sparkles />} value="12" label="schemes may be available" />
+          <Stat icon={<Sparkles />} value={schemesCount === null ? "—" : String(schemesCount)} label="current schemes in catalogue" />
           <Stat
             icon={<FileCheck2 />}
             value={String(documents.filter((doc) => doc.status === "Analyzed").length)}
@@ -60,7 +81,7 @@ function Dashboard() {
             value={String(documents.filter((doc) => doc.status !== "Analyzed").length)}
             label="documents needing analysis"
           />
-          <Stat icon={<FileText />} value="—" label="saved schemes" />
+          <Stat icon={<FileText />} value={savedCount === null ? "—" : String(savedCount)} label="saved schemes" />
         </div>
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-2xl bg-ink p-7 text-ivory">
@@ -69,7 +90,7 @@ function Dashboard() {
                 <p className="eyebrow text-saffron">PROFILE</p>
                 <h2 className="mt-3 text-2xl">Make your matches sharper</h2>
               </div>
-              <Link to="/profile" className="rounded-full bg-saffron p-3">
+              <Link to="/personalize?from=dashboard" className="rounded-full bg-saffron p-3">
                 <Pencil size={16} />
               </Link>
             </div>
@@ -80,15 +101,6 @@ function Dashboard() {
               <div>
                 <p className="font-medium">{String(profile.full_name || user.full_name)}</p>
                 <p className="text-sm text-ivory/55">{user.email}</p>
-              </div>
-            </div>
-            <div className="mt-7">
-              <div className="mb-2 flex justify-between text-xs text-ivory/60">
-                <span>Profile completion</span>
-                <span>{completion}%</span>
-              </div>
-              <div className="h-2 rounded-full bg-ivory/15">
-                <div className="h-full rounded-full bg-saffron" style={{ width: `${completion}%` }} />
               </div>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-ivory/65">
@@ -110,10 +122,16 @@ function Dashboard() {
               copy="Upload and analyze your certificates"
             />
             <Action
-              href="/recommendations"
+              href="/my-matches"
               icon={<Sparkles />}
               title="Your recommendations"
-              copy="12 schemes matched to your profile"
+              copy={
+                recommendationsCount === null
+                  ? "Recommendations: Not available"
+                  : recommendationsCount === 0
+                  ? "No matches yet"
+                  : `${recommendationsCount} scheme${recommendationsCount === 1 ? "" : "s"} matched to your profile`
+              }
             />
             <Action
               href="/saved"

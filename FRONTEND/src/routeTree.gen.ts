@@ -16,6 +16,7 @@ import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MyMatchesRouteImport } from './routes/my-matches'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RecommendationsRouteImport } from './routes/recommendations'
@@ -58,6 +59,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyMatchesRoute = MyMatchesRouteImport.update({
+  id: '/my-matches',
+  path: '/my-matches',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PersonalizeRoute = PersonalizeRouteImport.update({
   id: '/personalize',
   path: '/personalize',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/documents': typeof DocumentsRoute
   '/login': typeof LoginRoute
+  '/my-matches': typeof MyMatchesRoute
   '/personalize': typeof PersonalizeRoute
   '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/documents': typeof DocumentsRoute
   '/login': typeof LoginRoute
+  '/my-matches': typeof MyMatchesRoute
   '/personalize': typeof PersonalizeRoute
   '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/documents': typeof DocumentsRoute
   '/login': typeof LoginRoute
+  '/my-matches': typeof MyMatchesRoute
   '/personalize': typeof PersonalizeRoute
   '/profile': typeof ProfileRoute
   '/recommendations': typeof RecommendationsRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/documents'
     | '/login'
+    | '/my-matches'
     | '/personalize'
     | '/profile'
     | '/recommendations'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/documents'
     | '/login'
+    | '/my-matches'
     | '/personalize'
     | '/profile'
     | '/recommendations'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/documents'
     | '/login'
+    | '/my-matches'
     | '/personalize'
     | '/profile'
     | '/recommendations'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DocumentsRoute: typeof DocumentsRoute
   LoginRoute: typeof LoginRoute
+  MyMatchesRoute: typeof MyMatchesRoute
   PersonalizeRoute: typeof PersonalizeRoute
   ProfileRoute: typeof ProfileRoute
   RecommendationsRoute: typeof RecommendationsRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-matches': {
+      id: '/my-matches'
+      path: '/my-matches'
+      fullPath: '/my-matches'
+      preLoaderRoute: typeof MyMatchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/personalize': {
       id: '/personalize'
       path: '/personalize'
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DocumentsRoute: DocumentsRoute,
   LoginRoute: LoginRoute,
+  MyMatchesRoute: MyMatchesRoute,
   PersonalizeRoute: PersonalizeRoute,
   ProfileRoute: ProfileRoute,
   RecommendationsRoute: RecommendationsRoute,

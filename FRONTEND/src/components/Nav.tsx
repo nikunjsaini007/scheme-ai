@@ -1,8 +1,9 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
-import { Menu, Mic, X, UserRound } from "lucide-react";
-import { useState } from "react";
+import { Menu, Mic, X, UserRound, Bell, Check, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/supabase";
 import { useT } from "@/lib/i18n";
 import { useLang } from "@/store/useLang";
 import govtOfIndia from "@/assets/govt-of-india.png";
@@ -25,8 +26,68 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const dark = darkProp;
-  const user = getUser();
+  // Defer reading auth state until the client to avoid SSR/client hydration mismatch
+  const [clientUser, setClientUser] = useState<any | null>(null);
   const fixed = solid || location.pathname === "/personalize";
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // populate client-side user after hydration
+    try {
+      setClientUser(getUser());
+    } catch (err) {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadNotifications = async () => {
+      const user = getUser();
+      if (!user) return;
+      try {
+        const { data, error } = await supabase.from("inbox_entries").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20);
+        if (error) {
+          // treat missing table or other errors as empty inbox
+          console.error("Inbox fetch failed:", error);
+          if (!mounted) return;
+          setNotifications([]);
+          setUnreadCount(0);
+          return;
+        }
+        if (!mounted) return;
+        setNotifications((data as any) || []);
+        setUnreadCount(((data as any) || []).filter((n: any) => !n.is_read && n.is_read !== true).length);
+      } catch (e) {
+        console.error("Inbox fetch failed:", e);
+        if (!mounted) return;
+        setNotifications([]);
+        setUnreadCount(0);
+      }
+    };
+    loadNotifications();
+    const sub = setInterval(loadNotifications, 60 * 1000);
+    return () => { mounted = false; clearInterval(sub); };
+  }, []);
+
+  const markAsRead = async (id: string) => {
+    try {
+      await supabase.from("inbox_entries").update({ is_read: true }).eq("id", id);
+      setNotifications((cur) => cur.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+      setUnreadCount((c) => Math.max(0, c - 1));
+    } catch (e) {}
+  };
+  const markAllRead = async () => {
+    const user = getUser();
+    if (!user) return;
+    try {
+      await supabase.from("inbox_entries").update({ is_read: true }).eq("user_id", user.id).eq("is_read", false);
+      setNotifications((cur) => cur.map((n) => ({ ...n, is_read: true })));
+      setUnreadCount(0);
+    } catch (e) {}
+  };
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (v) => setSolid(v > 40));
 
@@ -83,7 +144,49 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
             >
               {t("Check eligibility")}
             </Link>
-            {user ? <><Link to="/dashboard" className={cn("eyebrow flex items-center gap-2", dark ? "text-ivory/75" : "text-ink/70")}><UserRound className="size-4 text-saffron" /> {user.full_name.split(" ")[0]}</Link><button onClick={() => { signOut(); window.location.reload(); }} className={cn("eyebrow", dark ? "text-ivory/65" : "text-ink/60")}>LOG OUT</button></> : <Link to="/login" search={{ redirect: "/dashboard" }} className="eyebrow text-saffron">LOGIN / CREATE ACCOUNT</Link>}
+            {clientUser ? (
+              <>
+                <div className="relative">
+                  <button onClick={() => setNotifOpen((s) => !s)} className="text-ink/60 hover:text-saffron" aria-label="Notifications">
+                    <Bell className="size-5" />
+                    {unreadCount > 0 && <span className="absolute -right-2 -top-1 inline-flex items-center justify-center rounded-full bg-saffron px-1 text-[11px] font-semibold text-white">{unreadCount}</span>}
+                  </button>
+
+                  {notifOpen && (
+                    <div className="absolute right-0 mt-3 w-[320px] rounded-lg bg-white p-4 shadow-lg z-50 text-ink">
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold">Notifications</p>
+                        <button onClick={() => void markAllRead()} className="text-sm text-ink/50">Mark all read</button>
+                      </div>
+                      <div className="mt-2 max-h-64 overflow-auto">
+                        {notifications.length === 0 && <p className="text-sm text-ink/60">No notifications</p>}
+                        {notifications.map((n) => (
+                          <div key={n.id} className={`mt-2 flex items-start gap-3 rounded p-2 ${n.is_read ? "bg-ivory" : "bg-ivory-deep/5"}`}>
+                            <div className="mt-1">
+                              {n.is_read ? <Check className="size-4 text-verified" /> : <XCircle className="size-4 text-saffron" />}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium">{n.title}</p>
+                              <p className="text-xs text-ink/60">{n.body}</p>
+                              <div className="mt-1 flex gap-2 text-xs">
+                                <button onClick={() => void markAsRead(n.id)} className="text-ink/50">Mark read</button>
+                                {n.data?.scheme_id && <a href={`/scheme/${n.data.scheme_id}`} className="text-saffron">View</a>}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <Link to="/dashboard" className={cn("eyebrow flex items-center gap-2", dark ? "text-ivory/75" : "text-ink/70")}><UserRound className="size-4 text-saffron" /> {clientUser.full_name.split(" ")[0]}</Link>
+                <button onClick={() => { signOut(); window.location.reload(); }} className={cn("eyebrow", dark ? "text-ivory/65" : "text-ink/60")}>LOG OUT</button>
+              </>
+
+            ) : (
+              <Link to="/login" search={{ redirect: "/dashboard" }} className="eyebrow text-saffron">LOGIN / CREATE ACCOUNT</Link>
+            )}
           </div>
 
           <button onClick={() => setOpen(true)} className="lg:hidden" aria-label="Open menu">

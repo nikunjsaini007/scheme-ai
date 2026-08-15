@@ -7,6 +7,31 @@ type Profile = Record<string, unknown>;
 const text = (value: unknown) => String(value ?? "").trim().toLowerCase();
 const number = (value: unknown) => typeof value === "number" ? value : Number(String(value ?? "").replace(/[^0-9.]/g, "")) || null;
 
+function normalizeEligibility(value: unknown): unknown[] {
+  if (Array.isArray(value)) return value;
+  if (value == null) return [];
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [value];
+    } catch {
+      return [value];
+    }
+  }
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).map(([k, v]) => ({ [k]: v }));
+  }
+  return [];
+}
+
+function formatEligibilityItem(item: unknown): string {
+  if (item == null) return "";
+  if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") return String(item);
+  if (Array.isArray(item)) return item.map(String).join(" ");
+  if (typeof item === "object") return Object.entries(item as Record<string, unknown>).map(([k, v]) => `${k} ${String(v)}`).join(" ");
+  return String(item);
+}
+
 function criterion(rule: string, profile: Profile, field: string, keywords: string[]) {
   const value = text(profile[field]);
   const applies = keywords.some((keyword) => rule.includes(keyword));
@@ -14,7 +39,8 @@ function criterion(rule: string, profile: Profile, field: string, keywords: stri
 }
 
 export function evaluateScheme(scheme: SchemeRecord, profile: Profile): EligibilityResult {
-  const rules = scheme.eligibility.map(text).join(" ");
+  const eligibilityArr = normalizeEligibility((scheme as any).eligibility);
+  const rules = eligibilityArr.map(formatEligibilityItem).map(text).join(" ");
   const reasons: string[] = [];
   const blockers: string[] = [];
   const missing: string[] = [];
