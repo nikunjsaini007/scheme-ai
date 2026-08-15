@@ -31,7 +31,6 @@ export function Hero() {
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -180]);
   const blockX = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const runDemo = useProfile((s) => s.runDemo);
   const { t } = useT();
   const [slide, setSlide] = useState(0);
   useEffect(() => {

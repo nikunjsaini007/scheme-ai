@@ -28,7 +28,7 @@ export function Footer() {
               {t("AI-powered government scheme discovery for India. Yojana + intelligent technology.")}
             </p>
             <p className="mt-6 text-[11px] leading-relaxed text-ivory/35">
-              {t("Independent platform. Not affiliated with any government department. All scheme data shown here is demonstration data.")}
+              {t("Independent platform. Not affiliated with any government department.")}
             </p>
           </div>
 

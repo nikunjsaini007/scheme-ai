@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useRef, type FormEvent } from "react";
+import { useState, useRef, useEffect, type FormEvent } from "react";
 import { ArrowRight, ChevronRight, Mic, RotateCcw, Send, Sparkles, UserRound } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Footer } from "@/components/Footer";
@@ -11,6 +11,8 @@ import { useProfile } from "@/store/useProfile";
 import assistantProfile from "@/assets/aiAssistantProfile.png";
 import { cn } from "@/lib/utils";
 import { askAntra } from "@/lib/antra";
+import { getUser } from "@/lib/auth";
+import { fetchUserProfile } from "@/lib/schemeCatalog";
 
 type Message = { id: number; text: string; user: boolean };
 
@@ -31,6 +33,8 @@ export const Route = createFileRoute("/assistant")({
 function Assistant() {
   const { t } = useT();
   const { persona, answers } = useProfile();
+  const [dbProfile, setDbProfile] = useState<Record<string, unknown> | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [typing, setTyping] = useState(false);
@@ -56,6 +60,30 @@ function Assistant() {
     }
   };
 
+  // Load authoritative profile on mount
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoadingProfile(true);
+      try {
+        const user = getUser();
+        if (!user) {
+          setDbProfile(null);
+          return;
+        }
+        const profile = await fetchUserProfile(user.id);
+        if (!cancelled) setDbProfile(profile);
+      } catch (e) {
+        // ignore — UI will show fallback
+        if (!cancelled) setDbProfile(null);
+      } finally {
+        if (!cancelled) setLoadingProfile(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
   const ask = async (question: string, optSpeak = true) => {
     if (!question.trim() || typing) return;
     const clean = question.trim();
@@ -63,39 +91,38 @@ function Assistant() {
     setInput("");
     setTyping(true);
     try {
+      // Ensure we have the authoritative profile read from the database
+      const user = await fetchUserProfile(getUser()?.id || "");
+      setDbProfile(user);
+      const profileForAI: Record<string, unknown> = {
+        age: user.age ?? null,
+        gender: (String(user.gender || "") || null) as unknown,
+        state: user.state ?? null,
+        district: user.district ?? null,
+        pincode: user.pincode ?? null,
+        occupation: user.occupation ?? null,
+        annual_income: user.annual_income ?? null,
+        education_level: user.education_level ?? null,
+        category: user.category ?? null,
+        marital_status: user.marital_status ?? null,
+        is_student: user.is_student ?? null,
+        disability_status: user.disability_status ?? null,
+      };
+
       const text = await askAntra({
         data: {
           question: clean,
-          history: messages.map((message) => ({
-            role: message.user ? "user" : "model",
-            text: message.text,
-          })),
-          profile: Object.fromEntries([
-            ...(persona ? [["persona", persona]] : []),
-            ...Object.entries(answers),
-          ]),
-          schemes: schemes.map(({ name, summary, benefit, category, match }) => ({
-            name,
-            summary,
-            benefit,
-            category,
-            match,
-          })),
+          history: messages.map((message) => ({ role: message.user ? "user" : "model", text: message.text })),
+          // pass authoritative DB profile (not local store) to the server
+          profile: profileForAI as Record<string, string>,
+          schemes: schemes.map(({ name, summary, benefit, category, match }) => ({ name, summary, benefit, category, match })),
         },
       });
       setMessages((items) => [...items, { id: Date.now() + 1, text, user: false }]);
       if (optSpeak) speakText(text);
     } catch (error) {
       const errText = error instanceof Error ? error.message : "Antra is temporarily unavailable. Please try again later.";
-      setMessages((items) => [
-        ...items,
-        {
-          id: Date.now() + 1,
-          text: errText,
-          user: false,
-        },
-      ]);
-      // Do not attempt to speak errors
+      setMessages((items) => [...items, { id: Date.now() + 1, text: errText, user: false }]);
     } finally {
       setTyping(false);
     }
@@ -193,24 +220,28 @@ function Assistant() {
             <div className="mt-10 border-t border-ink/15 pt-6">
               <p className="eyebrow text-ink/40">{t("Your context")}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {(persona
-                  ? [persona, ...Object.values(answers).slice(0, 2)]
-                  : ["No profile yet"]
-                ).map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60"
-                  >
-                    {t(item)}
-                  </span>
-                ))}
+                {loadingProfile ? (
+                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">Loading profile…</span>
+                ) : dbProfile ? (
+                  // Build a concise set of profile chips using only present fields
+                  [
+                    dbProfile.gender ? String(dbProfile.gender) : null,
+                    dbProfile.age ? `Age: ${dbProfile.age}` : null,
+                    dbProfile.state ? String(dbProfile.state) : null,
+                    dbProfile.occupation ? String(dbProfile.occupation) : null,
+                    dbProfile.category ? String(dbProfile.category) : null,
+                    dbProfile.annual_income ? `Income: ₹${Number(dbProfile.annual_income).toLocaleString('en-IN')}` : null,
+                  ].filter(Boolean).map((item) => (
+                    <span key={String(item)} className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">{item}</span>
+                  ))
+                ) : (
+                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">No profile yet</span>
+                )}
               </div>
-              <Link
-                to="/personalize"
-                className="mt-6 inline-flex items-center gap-2 text-[11px] font-semibold tracking-[.16em] text-saffron uppercase hover:text-ink"
-              >
-                {t("Personalize your context")} <ArrowRight className="size-3.5" />
-              </Link>
+              <div className="mt-3 flex items-center gap-3">
+                <Link to="/personalize" className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[.16em] text-saffron uppercase hover:text-ink">{t("Personalize your context")} <ArrowRight className="size-3.5" /></Link>
+                <button onClick={async () => { setLoadingProfile(true); try { const user = getUser(); if (user) { const refreshed = await fetchUserProfile(user.id); setDbProfile(refreshed); } } catch { } finally { setLoadingProfile(false); } }} className="text-xs text-ink/50 underline">Refresh profile</button>
+              </div>
             </div>
           </div>
 
@@ -363,7 +394,7 @@ function Assistant() {
             </div>
             <p className="mt-4 text-center text-[11px] leading-relaxed text-ink/40">
               {t(
-                "Demo guidance only. Always verify eligibility and apply through the official government portal.",
+                "Always verify eligibility and apply through the official government portal.",
               )}
             </p>
           </div>

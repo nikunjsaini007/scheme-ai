@@ -8,14 +8,14 @@ import { fetchActiveSchemes, type SchemeRecord } from "@/lib/schemeCatalog";
 export function PublicSchemes() {
   const [schemes, setSchemes] = useState<SchemeRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
     void fetchActiveSchemes()
       .then(setSchemes)
-      .catch(() => setError(true))
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false));
   }, []);
 
@@ -45,7 +45,7 @@ export function PublicSchemes() {
       </div>
 
       {loading && <p className="mt-16 text-sm text-ink/55">Loading current schemes…</p>}
-      {error && <p className="mt-16 bg-ivory-deep p-8 text-sm text-ink/60">Current scheme information is temporarily unavailable. Please try again soon.</p>}
+      {error && <p className="mt-16 bg-ivory-deep p-8 text-sm text-ink/60">Current scheme information is temporarily unavailable. {error}</p>}
       {!loading && !error && schemes.length === 0 && (
         <p className="mt-16 bg-ivory-deep p-8 text-sm text-ink/60">No verified current schemes are available yet.</p>
       )}

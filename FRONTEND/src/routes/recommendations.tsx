@@ -11,7 +11,7 @@ import { requireAuth } from "@/components/AuthGuard";
 import { supabase } from "@/supabase";
 import { getScheme } from "@/data/schemes";
 
-const FILTERS = ["All", "Eligible", "Likely eligible", "Partially matched", "Need more information", "Education", "Employment", "Financial", "Healthcare", "Housing", "Agriculture", "Women & Child", "Entrepreneurship", "State Schemes", "Central Schemes"];
+const FILTERS = ["All", "Eligible", "Likely eligible", "Possible match", "Need more information", "Education", "Employment", "Financial", "Healthcare", "Housing", "Agriculture", "Women & Child", "Entrepreneurship", "State Schemes", "Central Schemes"];
 
 export const Route = createFileRoute("/recommendations")({
   beforeLoad: requireAuth,
@@ -93,7 +93,9 @@ function Recommendations() {
         const aDeadline = typeof a.deadlineDays === "number" ? a.deadlineDays : Infinity;
         const bDeadline = typeof b.deadlineDays === "number" ? b.deadlineDays : Infinity;
         if (aDeadline !== bDeadline) return aDeadline - bDeadline;
-        return b.match_score - a.match_score;
+        const aScore = typeof a.match_score === 'number' ? a.match_score : -1;
+        const bScore = typeof b.match_score === 'number' ? b.match_score : -1;
+        return bScore - aScore;
       });
 
       setRecommendations(annotated as RecommendationRecord[]);
@@ -114,9 +116,11 @@ function Recommendations() {
   }, [generating, phases.length]);
   const filtered = useMemo(() => recommendations.filter((item) => {
     const matchesSearch = `${item.scheme_name} ${item.short_description} ${item.category} ${item.ministry_or_department}`.toLowerCase().includes(search.toLowerCase());
-    const status = item.missing_requirements.length ? "Need more information" : item.match_band === "strong" ? "Eligible" : item.match_band === "good" ? "Likely eligible" : "Partially matched";
-    const matchesFilter = filter === "All" || filter === status || (filter === "Strong Matches" && item.match_band === "strong") || (filter === "State Schemes" && item.government_level === "State") || (filter === "Central Schemes" && item.government_level === "Central") || item.category.toLowerCase().includes(filter.replace(" & ", " ").toLowerCase());
-    return matchesSearch && matchesFilter;
+  const score = typeof item.match_score === "number" ? item.match_score : null;
+  const status = item.missing_requirements && item.missing_requirements.length ? "Need more information" : score === null ? "Match score unavailable" : score >= 90 ? "Eligible" : score >= 75 ? "Likely eligible" : score >= 60 ? "Possible match" : score >= 50 ? "Low confidence" : "Below threshold";
+  if (typeof score === "number" && score < 50) return false; // exclude below threshold
+  const matchesFilter = filter === "All" || filter === status || (filter === "Strong Matches" && score !== null && score >= 90) || (filter === "State Schemes" && item.government_level === "State") || (filter === "Central Schemes" && item.government_level === "Central") || item.category.toLowerCase().includes(filter.replace(" & ", " ").toLowerCase());
+  return matchesSearch && matchesFilter;
   }), [filter, recommendations, search]);
   const toggleSave = async (id: string) => {
     if (!user) return;
@@ -192,12 +196,13 @@ function Recommendations() {
 }
 
 function RecommendationCard({ item, index, saved, onSave }: { item: RecommendationRecord & { deadlineDays?: number | null; parsedBenefitAmount?: number | null }; index: number; saved: boolean; onSave: () => void }) {
-  const band = item.match_band === "strong" ? "Strong Match" : item.match_band === "good" ? "Likely eligible" : "Partially matched";
-  const best = item.match_score >= 90;
+  const score = typeof item.match_score === 'number' ? item.match_score : null;
+  const band = score === null ? "Match score unavailable" : score >= 90 ? "Strong Match" : score >= 75 ? "Likely eligible" : score >= 60 ? "Possible match" : score >= 50 ? "Low confidence" : "Below threshold";
+  const best = score !== null && score >= 90;
   const parsedAmount = (item as any).parsedBenefitAmount ?? null;
   const highBenefit = parsedAmount && parsedAmount >= 100000; // conservative threshold — only when amount is published
   const deadlineDays = (item as any).deadlineDays;
-  const deadlineTag = typeof deadlineDays === "number" ? (deadlineDays <= 0 ? `🔴 Deadline passed` : deadlineDays === 0 ? `🔴 Deadline today` : deadlineDays <= 7 ? `🟠 Due in ${deadlineDays} days` : `🟢 Open`) : `⚪ No deadline specified`;
+  const deadlineTag = typeof deadlineDays === "number" ? (deadlineDays < 0 ? `🔴 Deadline passed` : deadlineDays === 0 ? `🔴 Deadline today` : deadlineDays <= 7 ? `🟠 Due in ${deadlineDays} days` : `🟢 Open`) : `⚪ No fixed deadline announced`;
 
   const [showDetails, setShowDetails] = useState(false);
   return (
@@ -211,7 +216,7 @@ function RecommendationCard({ item, index, saved, onSave }: { item: Recommendati
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="eyebrow text-saffron">{item.match_score}% · {band}</span>
+            <span className="eyebrow text-saffron">{score === null ? 'Match score unavailable' : `${Math.round(score)}% · ${band}`}</span>
             {best && <span className="ml-2 rounded-full bg-verified/10 px-2 py-1 text-[11px] font-medium text-verified">Best Match</span>}
             {highBenefit && <span className="ml-2 rounded-full border border-ink/12 px-2 py-1 text-[11px] font-medium">High benefit</span>}
             <span className="ml-2 rounded-full border border-ink/12 px-2 py-1 text-[11px] font-medium">{deadlineTag}</span>

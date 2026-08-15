@@ -225,7 +225,6 @@ function Personalize() {
         <Nav />
         <section className="edge flex min-h-[72vh] items-center py-32">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
-            <div className="grid size-14 place-items-center rounded-full bg-saffron text-white"><Sparkles className="size-6" /></div>
             <p className="eyebrow mt-8 text-saffron">{t("Your profile is ready")}</p>
             <h1 className="display mt-4 text-6xl leading-[0.9] md:text-8xl">{t("Ready to find your benefits?")}</h1>
             <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/60">{t("We’ll use your answers to surface schemes that are relevant to your situation. You can always change them later.")}</p>
@@ -275,7 +274,7 @@ function Personalize() {
               <LineReveal as="h1" className="display mt-8 text-[17vw] leading-[0.9] md:text-[9vw]" lines={[t("A better way"), t("to discover.")]} />
               <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/55">{t("Answer a few simple questions. We’ll narrow thousands of schemes down to the ones written for people like you.")}</p>
             </Reveal>
-            <div className="mt-14 hidden border-t border-ink/15 pt-6 lg:block"><p className="eyebrow text-ink/35">{t("Your answers stay private")}</p><p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/55">{t("This demo keeps your profile in your browser. Yojantra never collects fees or processes applications.")}</p></div>
+            <div className="mt-14 hidden border-t border-ink/15 pt-6 lg:block"><p className="eyebrow text-ink/35">{t("Your answers stay private")}</p><p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/55">{t("Yojantra never collects fees or processes applications.")}</p></div>
           </div>
 
           <div className="lg:col-span-6 lg:col-start-7">

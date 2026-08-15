@@ -76,7 +76,7 @@ function About() {
             <p className="mt-8 text-sm text-ink/55">{t("Privacy")}:</p>
             <p className="mt-3 text-[15px] leading-relaxed text-ink/80">
               {t(
-                "Your answers are private and stay in your browser in this demo. We never collect fees or process applications.",
+                " We never collect fees or process applications.",
               )}
             </p>
           </Reveal>

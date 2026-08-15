@@ -71,7 +71,7 @@ export function AiMatching() {
       </div>
       <Reveal>
         <p className="mt-6 text-left text-[11px] text-ink/40">
-          {t("Demo figures based on the sample profile. Not a government decision.")}
+          {t("Not a government decision.")}
         </p>
       </Reveal>
     </section>

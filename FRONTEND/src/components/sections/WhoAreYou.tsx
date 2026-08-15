@@ -98,7 +98,7 @@ export function WhoAreYou() {
                     </motion.li>
                   ))}
                 </ul>
-                <p className="mt-6 text-[11px] text-ivory/40">{t("Demo content — indicative categories, not a decision.")}</p>
+                <p className="mt-6 text-[11px] text-ivory/40">{t("Indicative categories, not a decision.")}</p>
               </motion.div>
             )}
           </AnimatePresence>

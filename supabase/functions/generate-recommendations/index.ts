@@ -227,7 +227,7 @@ Deno.serve(async (request) => {
   const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
   if (!token || !supabaseUrl || !anonKey) return response({ success: false, error: "Recommendation service is not configured" }, 503);
 
-  const supabase = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: `Bearer ${token}` } } });
+  const supabase = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: 'Bearer ' + token } } });
   const { data: authData, error: authError } = await supabase.auth.getUser(token);
   if (authError || !authData.user) return response({ success: false, error: "Authentication required" }, 401);
   const userId = authData.user.id;
@@ -277,7 +277,8 @@ Deno.serve(async (request) => {
         deterministic.set(candidate.id, evalResult);
       } catch (e) {
         console.error(JSON.stringify({ function: "generate-recommendations", stage: "deterministic_error", scheme_id: candidate.id, error: errorText(e) }));
-        deterministic.set(candidate.id, { score: 50, status: "needs_information", reasons: [], missing: ["Eligibility data could not be parsed"], blockers: [] });
+        // On parse failure mark as 'needs_information' with score 0 so it does not get a fake default.
+        deterministic.set(candidate.id, { score: 0, status: "needs_information", reasons: [], missing: ["Eligibility data could not be parsed"], blockers: [] });
       }
     }
 
@@ -316,23 +317,28 @@ Return ONLY JSON in this exact shape: {"recommendations":[{"scheme_id":"candidat
     }
 
     try {
+      console.info(JSON.stringify({ function: "generate-recommendations", stage: "gemini_request_start", user_id: userId, gemini_key_present: !!apiKey, gemini_model: model, candidate_count: relevantCandidates.length }));
       if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
       const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey }, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1, responseMimeType: "application/json" } }) });
-      if (!geminiResponse.ok) throw new Error(`Gemini ${geminiResponse.status}: ${(await geminiResponse.text()).slice(0, 300)}`);
-      const payload = await geminiResponse.json();
+      const respText = await geminiResponse.text();
+      console.info(JSON.stringify({ function: "generate-recommendations", stage: "gemini_response_status", user_id: userId, status: geminiResponse.status, ok: geminiResponse.ok, response_length: respText.length }));
+      if (!geminiResponse.ok) throw new Error(`Gemini ${geminiResponse.status}: ${respText.slice(0, 300)}`);
+      let payload: any;
+      try { payload = JSON.parse(respText); } catch (e) { throw new Error("Gemini returned non-JSON response"); }
       const text = payload.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("").trim();
       if (!text) throw new Error("Gemini returned an empty recommendation result");
       parsed = JSON.parse(text.replace(/^```json\s*/i, "").replace(/\s*```$/, "")) as { recommendations?: Recommendation[] };
+      console.info(JSON.stringify({ function: "generate-recommendations", stage: "gemini_parsed", user_id: userId, parsed_count: parsed.recommendations ? parsed.recommendations.length : 0 }));
     } catch (error) {
       usedFallback = true;
       console.error(JSON.stringify({ function: "generate-recommendations", stage: "gemini_fallback", user_id: userId, error: errorText(error) }));
-      parsed = { recommendations: relevantCandidates.map((candidate) => ({ scheme_id: candidate.id, match_score: deterministic.get(candidate.id)?.score || 0, confidence_score: 0.5, why_matches: uniqueStrings(deterministic.get(candidate.id)?.reasons || []), missing_requirements: uniqueStrings(deterministic.get(candidate.id)?.missing || []), eligibility_summary: uniqueStrings(deterministic.get(candidate.id)?.blockers || (Array.isArray(candidate.eligibility) ? candidate.eligibility : normalizeEligibility(candidate.eligibility))), benefits: uniqueStrings(candidate.benefits || []), required_documents: uniqueStrings(candidate.documents_required || []), application_process: [] })) };    }
+      parsed = { recommendations: relevantCandidates.map((candidate) => ({ scheme_id: candidate.id, match_score: deterministic.get(candidate.id)!.score, confidence_score: 0.5, why_matches: uniqueStrings(deterministic.get(candidate.id)!.reasons || []), missing_requirements: uniqueStrings(deterministic.get(candidate.id)!.missing || []), eligibility_summary: uniqueStrings(deterministic.get(candidate.id)!.blockers || (Array.isArray(candidate.eligibility) ? candidate.eligibility : normalizeEligibility(candidate.eligibility))), benefits: uniqueStrings(candidate.benefits || []), required_documents: uniqueStrings(candidate.documents_required || []), application_process: [] })) };    }
     const byId = new Map(sanitizedCandidates.map((candidate) => [candidate.id, candidate]));
     let selectedRecommendations = parsed.recommendations || [];
     if (!selectedRecommendations.length) {
       usedFallback = true;
       if (relevantCandidates.length) {
-        selectedRecommendations = relevantCandidates.map((candidate) => ({ scheme_id: candidate.id, match_score: deterministic.get(candidate.id)?.score || 50, confidence_score: 0.5, why_matches: uniqueStrings(deterministic.get(candidate.id)?.reasons || []), missing_requirements: uniqueStrings(deterministic.get(candidate.id)?.missing || ["Eligibility needs verification from the official scheme authority."]), eligibility_summary: uniqueStrings(deterministic.get(candidate.id)?.blockers || (Array.isArray(candidate.eligibility) ? candidate.eligibility : normalizeEligibility(candidate.eligibility))), benefits: uniqueStrings(candidate.benefits || []), required_documents: uniqueStrings(candidate.documents_required || []), application_process: [] }));
+        selectedRecommendations = relevantCandidates.map((candidate) => ({ scheme_id: candidate.id, match_score: deterministic.get(candidate.id)!.score, confidence_score: 0.5, why_matches: uniqueStrings(deterministic.get(candidate.id)!.reasons || []), missing_requirements: uniqueStrings(deterministic.get(candidate.id)!.missing || ["Eligibility needs verification from the official scheme authority."]), eligibility_summary: uniqueStrings(deterministic.get(candidate.id)!.blockers || (Array.isArray(candidate.eligibility) ? candidate.eligibility : normalizeEligibility(candidate.eligibility))), benefits: uniqueStrings(candidate.benefits || []), required_documents: uniqueStrings(candidate.documents_required || []), application_process: [] }));
         console.info(JSON.stringify({ function: "generate-recommendations", stage: "empty_gemini_fallback", user_id: userId, fallback_count: selectedRecommendations.length }));
       } else {
         // No eligible candidates after deterministic filtering. Do not fall back to the full catalogue.
@@ -383,3 +389,4 @@ Return ONLY JSON in this exact shape: {"recommendations":[{"scheme_id":"candidat
     return response({ success: false, error: "Unable to generate personalized recommendations right now. Please try again." }, 502);
   }
 });
+

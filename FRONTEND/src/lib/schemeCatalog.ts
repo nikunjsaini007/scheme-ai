@@ -55,13 +55,30 @@ export type RecommendationRecord = {
 const safeArray = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0) : [];
 
 export async function fetchActiveSchemes() {
-  const { data, error } = await supabase
+  // Primary query: follow expected status values
+  const primary = await supabase
     .from("schemes")
     .select("*")
     .in("status", ["active", "current"])
     .order("last_verified_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
+  if (primary.error) {
+    // Surface the error to the caller so UI can display it
+    throw new Error(primary.error.message || "Failed to load schemes");
+  }
+
+  let data = primary.data || [];
+
+  // If primary returned no rows, try a permissive fallback that selects any non-inactive schemes.
+  if (Array.isArray(data) && data.length === 0) {
+    const fallback = await supabase.from("schemes").select("*").neq("status", "inactive").order("last_verified_at", { ascending: false });
+    if (fallback.error) {
+      // If fallback also errors, throw the original primary error message (if any) or the fallback message
+      throw new Error(fallback.error.message || "Failed to load schemes (fallback)");
+    }
+    data = fallback.data || [];
+  }
+
   return (data || []).map((row) => ({ ...row, benefits: safeArray(row.benefits), eligibility: safeArray(row.eligibility), documents_required: safeArray(row.documents_required) })) as SchemeRecord[];
 }
 

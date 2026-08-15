@@ -105,7 +105,7 @@ export function Assistant() {
 
               <p className="mt-6 text-[15px] text-ink/85">{t("Want me to explain the best one?")}</p>
               <p className="mt-5 border-t border-ink/10 pt-4 text-[11px] text-ink/40">
-                {t("Demo conversation. Yojantra explains scheme criteria — it never decides your application.")}
+                {t("Yojantra explains scheme criteria — it never decides your application.")}
               </p>
             </div>
           </Reveal>
