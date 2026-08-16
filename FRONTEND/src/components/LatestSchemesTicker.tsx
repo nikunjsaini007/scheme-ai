@@ -13,7 +13,11 @@ export type LatestSchemeItem = {
 const DEFAULT_ITEMS: LatestSchemeItem[] = [
   { id: "pm-kisan", name: "PM-KISAN", detail: "₹6,000/year" },
   { id: "ayushman-bharat", name: "Ayushman Bharat", detail: "₹5 lakh health cover" },
-  { id: "pm-vishwakarma-2027-window", name: "PM Vishwakarma", detail: "Training + financial support" },
+  {
+    id: "pm-vishwakarma-2027-window",
+    name: "PM Vishwakarma",
+    detail: "Training + financial support",
+  },
   { id: "pmay", name: "PM Awas Yojana", detail: "Housing assistance" },
   { id: "post-matric-scholarship", name: "National Scholarship", detail: "Student benefits" },
 ];
@@ -73,11 +77,7 @@ export function LatestSchemesTicker({
                   return (
                     <li key={item.id}>
                       {toScheme ? (
-                        <Link
-                          to="/scheme/$id"
-                          params={{ id: item.id }}
-                          className={cls}
-                        >
+                        <Link to="/scheme/$id" params={{ id: item.id }} className={cls}>
                           {label}
                         </Link>
                       ) : (

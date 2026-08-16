@@ -7,10 +7,30 @@ import family from "@/assets/family-home.jpg";
 import senior from "@/assets/senior.jpg";
 
 const STORIES = [
-  { img: priya, title: ["How a scholarship", "helped Priya", "stay in college."], place: "Ranchi, Jharkhand", tag: "Education" },
-  { img: entrepreneur, title: ["From farmer", "to entrepreneur."], place: "Nashik, Maharashtra", tag: "Livelihood" },
-  { img: family, title: ["A housing scheme", "that changed", "a family's life."], place: "Warangal, Telangana", tag: "Housing" },
-  { img: senior, title: ["A pension that", "arrives on time."], place: "Kochi, Kerala", tag: "Social security" },
+  {
+    img: priya,
+    title: ["How a scholarship", "helped Priya", "stay in college."],
+    place: "Ranchi, Jharkhand",
+    tag: "Education",
+  },
+  {
+    img: entrepreneur,
+    title: ["From farmer", "to entrepreneur."],
+    place: "Nashik, Maharashtra",
+    tag: "Livelihood",
+  },
+  {
+    img: family,
+    title: ["A housing scheme", "that changed", "a family's life."],
+    place: "Warangal, Telangana",
+    tag: "Housing",
+  },
+  {
+    img: senior,
+    title: ["A pension that", "arrives on time."],
+    place: "Kochi, Kerala",
+    tag: "Social security",
+  },
 ];
 
 export function Stories() {
@@ -19,10 +39,15 @@ export function Stories() {
     <section id="stories" className="py-28 md:py-40">
       <div className="edge">
         <SectionLabel index="08" title={t("Stories")} />
-        <LineReveal className="display text-[13vw] leading-[0.86] md:text-[7.5vw]" lines={[t("Real people."), t("Real benefits.")]} />
+        <LineReveal
+          className="display text-[13vw] leading-[0.86] md:text-[7.5vw]"
+          lines={[t("Real people."), t("Real benefits.")]}
+        />
         <Reveal delay={0.2}>
           <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/55">
-            {t("Illustrative stories, written from the kinds of outcomes these schemes are designed to support.")}
+            {t(
+              "Illustrative stories, written from the kinds of outcomes these schemes are designed to support.",
+            )}
           </p>
         </Reveal>
       </div>

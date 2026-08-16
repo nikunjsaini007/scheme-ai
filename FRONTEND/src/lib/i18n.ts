@@ -19,7 +19,7 @@ const hi: Record<string, string> = {
   // Hero
   "Government scheme discovery": "सरकारी योजना खोज",
   "Find the": "खोजिए",
-  "Benefits": "लाभ",
+  Benefits: "लाभ",
   "you deserve.": "जो आपके लिए हैं।",
   "Government schemes are everywhere.": "सरकारी योजनाएँ हर जगह हैं।",
   "Finding the right one shouldn't be.": "सही योजना ढूँढना मुश्किल नहीं होना चाहिए।",
@@ -168,7 +168,7 @@ const hi: Record<string, string> = {
     "नमूना प्रोफ़ाइल पर आधारित डेमो आँकड़े। कोई सरकारी निर्णय नहीं।",
 
   // Assistant
-  "Just": "बस",
+  Just: "बस",
   "ask.": "पूछिए।",
   "Government schemes don't have to sound complicated. Speak or type in English, Hindi or Hinglish.":
     "सरकारी योजनाएँ जटिल नहीं लगनी चाहिएं। अंग्रेज़ी, हिंदी या हिंग्लिश में बोलें या टाइप करें।",
@@ -237,15 +237,19 @@ const hi: Record<string, string> = {
   // Journey
   "From curious": "जिज्ञासा से",
   "to applied.": "आवेदन तक।",
-  "Answer a few plain questions about your life.": "अपने जीवन के बारे में कुछ सरल प्रश्नों के उत्तर दें।",
+  "Answer a few plain questions about your life.":
+    "अपने जीवन के बारे में कुछ सरल प्रश्नों के उत्तर दें।",
   "Understand benefit": "लाभ समझें",
   "See what the scheme actually pays, and when.": "देखें योजना वास्तव में क्या और कब देती है।",
   "Prepare documents": "दस्तावेज़ तैयार करें",
-  "Know exactly what to collect before you start.": "शुरू करने से पहले जानें कि क्या-क्या इकट्ठा करना है।",
+  "Know exactly what to collect before you start.":
+    "शुरू करने से पहले जानें कि क्या-क्या इकट्ठा करना है।",
   Apply: "आवेदन करें",
-  "We hand you off to the official government portal.": "हम आपको आधिकारिक सरकारी पोर्टल पर भेज देते हैं।",
+  "We hand you off to the official government portal.":
+    "हम आपको आधिकारिक सरकारी पोर्टल पर भेज देते हैं।",
   "Track application": "आवेदन ट्रैक करें",
-  "Keep your application ID and deadlines in one place.": "अपना आवेदन आईडी और समयसीमाएँ एक जगह रखें।",
+  "Keep your application ID and deadlines in one place.":
+    "अपना आवेदन आईडी और समयसीमाएँ एक जगह रखें।",
   "Scroll sideways →": "बग़ल में स्क्रॉल करें →",
 
   // Results
@@ -301,7 +305,8 @@ const hi: Record<string, string> = {
   "Direct official application links": "आधिकारिक आवेदन लिंक",
   "Last verified date on every scheme": "हर योजना पर अंतिम सत्यापन तिथि",
   "Last verified": "अंतिम सत्यापन",
-  "Information verified against official government sources.": "आधिकारिक सरकारी स्रोतों से जानकारी सत्यापित।",
+  "Information verified against official government sources.":
+    "आधिकारिक सरकारी स्रोतों से जानकारी सत्यापित।",
 
   // WhyQualify
   Transparency: "पारदर्शिता",
@@ -369,14 +374,20 @@ const hi: Record<string, string> = {
   "Assured annual interest for a girl child": "बालिका के लिए निश्चित वार्षिक ब्याज",
   "Collateral-free working capital": "बिना जमानत कार्यशील पूँजी",
   "Guaranteed monthly pension after 60": "60 के बाद गारंटीकृत मासिक पेंशन",
-  "For students pursuing higher education after class 10.": "कक्षा 10 के बाद उच्च शिक्षा लेने वाले छात्रों के लिए।",
+  "For students pursuing higher education after class 10.":
+    "कक्षा 10 के बाद उच्च शिक्षा लेने वाले छात्रों के लिए।",
   "Income support for landholding farmer families.": "भूमिधारी किसान परिवारों के लिए आय सहायता।",
-  "Housing support for families without a pucca home.": "पक्के मकान के बिना परिवारों के लिए आवास सहायता।",
-  "Short-term certified training with placement support.": "प्लेसमेंट सहायता के साथ अल्पकालिक प्रमाणित प्रशिक्षण।",
+  "Housing support for families without a pucca home.":
+    "पक्के मकान के बिना परिवारों के लिए आवास सहायता।",
+  "Short-term certified training with placement support.":
+    "प्लेसमेंट सहायता के साथ अल्पकालिक प्रमाणित प्रशिक्षण।",
   "Cashless secondary and tertiary hospital care.": "कैशलेस द्वितीयक और तृतीयक अस्पताल देखभाल।",
-  "Long-term savings account for a girl child under 10.": "10 साल से कम उम्र की बालिका के लिए दीर्घकालिक बचत खाता।",
-  "Micro-credit for street vendors, in escalating tranches.": "सड़क विक्रेताओं के लिए सूक्ष्म-ऋण, बढ़ती किस्तों में।",
-  "Contributory pension for workers in the unorganised sector.": "असंगठित क्षेत्र के श्रमिकों के लिए अंशदायी पेंशन।",
+  "Long-term savings account for a girl child under 10.":
+    "10 साल से कम उम्र की बालिका के लिए दीर्घकालिक बचत खाता।",
+  "Micro-credit for street vendors, in escalating tranches.":
+    "सड़क विक्रेताओं के लिए सूक्ष्म-ऋण, बढ़ती किस्तों में।",
+  "Contributory pension for workers in the unorganised sector.":
+    "असंगठित क्षेत्र के श्रमिकों के लिए अंशदायी पेंशन।",
 
   // scheme route
   "← All schemes": "← सभी योजनाएँ",
@@ -384,7 +395,7 @@ const hi: Record<string, string> = {
   "Who can apply": "कौन आवेदन कर सकता है",
   "What you get": "आपको क्या मिलेगा",
   "What you'll need": "आपको क्या चाहिए होगा",
-  "Mandatory": "अनिवार्य",
+  Mandatory: "अनिवार्य",
   "If applicable": "यदि लागू हो",
   "Why it's required": "इसकी आवश्यकता क्यों",
   "How to obtain it": "इसे कैसे प्राप्त करें",
@@ -400,53 +411,73 @@ const hi: Record<string, string> = {
   "Education Certificate": "शैक्षणिक प्रमाण पत्र",
   "Caste Certificate": "जाति प्रमाण पत्र",
   "Land Records": "भूमि रिकॉर्ड",
-  "Used to confirm identity and prevent duplicate applications.": "पहचान की पुष्टि और डुप्लिकेट आवेदन रोकने के लिए।",
-  "Available from any Aadhaar Seva Kendra or the UIDAI portal.": "किसी भी आधार सेवा केंद्र या UIDAI पोर्टल से उपलब्ध।",
+  "Used to confirm identity and prevent duplicate applications.":
+    "पहचान की पुष्टि और डुप्लिकेट आवेदन रोकने के लिए।",
+  "Available from any Aadhaar Seva Kendra or the UIDAI portal.":
+    "किसी भी आधार सेवा केंद्र या UIDAI पोर्टल से उपलब्ध।",
   "Confirms your family income falls under the scheme's stated limit.":
     "पुष्टि करता है कि आपकी पारिवारिक आय योजना की निर्धारित सीमा के भीतर है।",
   "Issued by your Tehsil / SDM office or state e-district portal.":
     "आपके तहसील / SDM कार्यालय या राज्य ई-जिला पोर्टल द्वारा जारी।",
   "Benefits are transferred directly to a bank account in your name.":
     "लाभ आपके नाम के बैंक खाते में सीधे स्थानांतरित होते हैं।",
-  "Any bank branch; a zero-balance Jan Dhan account also works.": "कोई भी बैंक शाखा; ज़ीरो-बैलेंस जन धन खाता भी चलता है।",
+  "Any bank branch; a zero-balance Jan Dhan account also works.":
+    "कोई भी बैंक शाखा; ज़ीरो-बैलेंस जन धन खाता भी चलता है।",
   "Shows your current course and institution match the requirement.":
     "दिखाता है कि आपका वर्तमान पाठ्यक्रम और संस्थान आवश्यकता से मेल खाते हैं।",
-  "Issued by your school, college or university office.": "आपके स्कूल, कॉलेज या विश्वविद्यालय कार्यालय द्वारा जारी।",
+  "Issued by your school, college or university office.":
+    "आपके स्कूल, कॉलेज या विश्वविद्यालय कार्यालय द्वारा जारी।",
   "Required only for category-reserved components of the scheme.":
     "योजना के केवल आरक्षित श्रेणी घटकों के लिए आवश्यक।",
-  "Issued by your Tehsildar or state e-district portal.": "आपके तहसीलदार या राज्य ई-जिला पोर्टल द्वारा जारी।",
-  "Confirms cultivable land holding in your name.": "आपके नाम पर कृषि भूमि स्वामित्व की पुष्टि करता है।",
+  "Issued by your Tehsildar or state e-district portal.":
+    "आपके तहसीलदार या राज्य ई-जिला पोर्टल द्वारा जारी।",
+  "Confirms cultivable land holding in your name.":
+    "आपके नाम पर कृषि भूमि स्वामित्व की पुष्टि करता है।",
   "Available from your village Patwari or the state land records portal.":
     "आपके गाँव के पटवारी या राज्य भूमि रिकॉर्ड पोर्टल से उपलब्ध।",
 
   // whoCanApply / whatYouGet / howToApply
-  "Students enrolled in a recognised post-matriculation course": "मान्यता प्राप्त पोस्ट-मैट्रिक पाठ्यक्रम में नामांकित छात्र",
+  "Students enrolled in a recognised post-matriculation course":
+    "मान्यता प्राप्त पोस्ट-मैट्रिक पाठ्यक्रम में नामांकित छात्र",
   "Annual family income within the notified ceiling": "निर्धारित सीमा के भीतर वार्षिक पारिवारिक आय",
   "Indian citizen with a valid Aadhaar": "वैध आधार वाला भारतीय नागरिक",
-  "Not already receiving another central scholarship": "पहले से कोई अन्य केंद्रीय छात्रवृत्ति न पाने वाले",
-  "Maintenance allowance paid across the academic year": "शैक्षणिक वर्ष भर दिया जाने वाला भरण-पोषण भत्ता",
-  "Reimbursement of non-refundable tuition and admission fees": "गैर-वापसीयोग्य ट्यूशन और प्रवेश शुल्क की प्रतिपूर्ति",
+  "Not already receiving another central scholarship":
+    "पहले से कोई अन्य केंद्रीय छात्रवृत्ति न पाने वाले",
+  "Maintenance allowance paid across the academic year":
+    "शैक्षणिक वर्ष भर दिया जाने वाला भरण-पोषण भत्ता",
+  "Reimbursement of non-refundable tuition and admission fees":
+    "गैर-वापसीयोग्य ट्यूशन और प्रवेश शुल्क की प्रतिपूर्ति",
   "Additional allowance for hostel residents": "छात्रावास निवासियों के लिए अतिरिक्त भत्ता",
-  "Register on the National Scholarship Portal with your Aadhaar": "अपने आधार के साथ राष्ट्रीय छात्रवृत्ति पोर्टल पर पंजीकरण करें",
-  "Complete the student profile and select your institution": "छात्र प्रोफ़ाइल पूरी करें और अपना संस्थान चुनें",
-  "Upload the required documents as scanned copies": "आवश्यक दस्तावेज़ स्कैन की हुई प्रतियों के रूप में अपलोड करें",
-  "Submit before the deadline and note your application ID": "समयसीमा से पहले जमा करें और अपना आवेदन आईडी नोट करें",
-  "Your institution verifies the application at its end": "आपका संस्थान अपनी ओर से आवेदन सत्यापित करता है",
+  "Register on the National Scholarship Portal with your Aadhaar":
+    "अपने आधार के साथ राष्ट्रीय छात्रवृत्ति पोर्टल पर पंजीकरण करें",
+  "Complete the student profile and select your institution":
+    "छात्र प्रोफ़ाइल पूरी करें और अपना संस्थान चुनें",
+  "Upload the required documents as scanned copies":
+    "आवश्यक दस्तावेज़ स्कैन की हुई प्रतियों के रूप में अपलोड करें",
+  "Submit before the deadline and note your application ID":
+    "समयसीमा से पहले जमा करें और अपना आवेदन आईडी नोट करें",
+  "Your institution verifies the application at its end":
+    "आपका संस्थान अपनी ओर से आवेदन सत्यापित करता है",
   "Landholding farmer families with cultivable land": "कृषि भूमि वाले भूमिधारी किसान परिवार",
   "Land records in the applicant's name": "आवेदक के नाम पर भूमि रिकॉर्ड",
   "Aadhaar-linked bank account": "आधार से जुड़ा बैंक खाता",
   "₹2,000 transferred every four months": "हर चार महीने में ₹2,000 हस्तांतरित",
   "Direct benefit transfer to your bank account": "आपके बैंक खाते में सीधा लाभ हस्तांतरण",
-  "Visit the PM-KISAN portal or your nearest Common Service Centre": "PM-किसान पोर्टल या अपने निकटतम कॉमन सर्विस सेंटर पर जाएँ",
-  "Complete new farmer registration with land details": "भूमि विवरण के साथ नया किसान पंजीकरण पूरा करें",
+  "Visit the PM-KISAN portal or your nearest Common Service Centre":
+    "PM-किसान पोर्टल या अपने निकटतम कॉमन सर्विस सेंटर पर जाएँ",
+  "Complete new farmer registration with land details":
+    "भूमि विवरण के साथ नया किसान पंजीकरण पूरा करें",
   "Verify Aadhaar and bank account linkage": "आधार और बैंक खाता लिंकिंग सत्यापित करें",
-  "Track instalment status through the beneficiary page": "लाभार्थी पृष्ठ के माध्यम से किस्त स्थिति ट्रैक करें",
-  "Family does not own a pucca house anywhere in India": "परिवार के पास भारत में कहीं भी पक्का मकान नहीं है",
+  "Track instalment status through the beneficiary page":
+    "लाभार्थी पृष्ठ के माध्यम से किस्त स्थिति ट्रैक करें",
+  "Family does not own a pucca house anywhere in India":
+    "परिवार के पास भारत में कहीं भी पक्का मकान नहीं है",
   "Household income within the notified slab": "निर्धारित सीमा के भीतर पारिवारिक आय",
   "No prior central housing assistance received": "पहले कोई केंद्रीय आवास सहायता प्राप्त नहीं हुई",
   "Credit-linked interest subsidy": "ऋण-लिंक्ड ब्याज सब्सिडी",
   "Assistance towards construction or purchase": "निर्माण या खरीद में सहायता",
-  "Apply through the PMAY portal or your urban local body": "PMAY पोर्टल या अपने शहरी स्थानीय निकाय के माध्यम से आवेदन करें",
+  "Apply through the PMAY portal or your urban local body":
+    "PMAY पोर्टल या अपने शहरी स्थानीय निकाय के माध्यम से आवेदन करें",
   "Submit household and income details": "परिवार और आय का विवरण जमा करें",
   "Await verification by the local authority": "स्थानीय प्राधिकरण द्वारा सत्यापन की प्रतीक्षा करें",
   "Indian citizens aged 15–45": "15–45 वर्ष के भारतीय नागरिक",
@@ -454,15 +485,19 @@ const hi: Record<string, string> = {
   "Free certified training": "मुफ़्त प्रमाणित प्रशिक्षण",
   "Assessment and certification": "मूल्यांकन और प्रमाणन",
   "Placement assistance": "प्लेसमेंट सहायता",
-  "Find a training centre on the Skill India portal": "स्किल इंडिया पोर्टल पर प्रशिक्षण केंद्र खोजें",
+  "Find a training centre on the Skill India portal":
+    "स्किल इंडिया पोर्टल पर प्रशिक्षण केंद्र खोजें",
   "Enrol in a course aligned to your interest": "अपनी रुचि के अनुसार पाठ्यक्रम में नामांकन करें",
   "Families identified under the deprivation criteria": "वंचना मानदंडों के तहत चिन्हित परिवार",
   "Verified through the beneficiary database": "लाभार्थी डेटाबेस से सत्यापित",
   "Cashless treatment at empanelled hospitals": "पंजीकृत अस्पतालों में कैशलेस उपचार",
-  "Cover for the whole family, no cap per member": "पूरे परिवार के लिए कवर, प्रति सदस्य कोई सीमा नहीं",
+  "Cover for the whole family, no cap per member":
+    "पूरे परिवार के लिए कवर, प्रति सदस्य कोई सीमा नहीं",
   "Check eligibility on the PM-JAY portal": "PM-JAY पोर्टल पर पात्रता जाँचें",
-  "Get your Ayushman card issued at a CSC or hospital desk": "CSC या अस्पताल डेस्क से अपना आयुष्मान कार्ड जारी करवाएँ",
-  "Parent or guardian of a girl child below 10 years": "10 वर्ष से कम आयु की बालिका का माता-पिता या अभिभावक",
+  "Get your Ayushman card issued at a CSC or hospital desk":
+    "CSC या अस्पताल डेस्क से अपना आयुष्मान कार्ड जारी करवाएँ",
+  "Parent or guardian of a girl child below 10 years":
+    "10 वर्ष से कम आयु की बालिका का माता-पिता या अभिभावक",
   "One account per girl child": "प्रति बालिका एक खाता",
   "Assured interest reviewed quarterly": "त्रैमासिक समीक्षित निश्चित ब्याज",
   "Tax benefit on deposits": "जमा पर कर लाभ",
@@ -474,7 +509,8 @@ const hi: Record<string, string> = {
   "Collateral-free loan": "बिना जमानत ऋण",
   "Interest subvention on timely repayment": "समय पर पुनर्भुगतान पर ब्याज अनुदान",
   "Cashback on digital transactions": "डिजिटल लेनदेन पर कैशबैक",
-  "Apply via the PM SVANidhi portal or a lending branch": "PM स्वनिधि पोर्टल या ऋण शाखा के माध्यम से आवेदन करें",
+  "Apply via the PM SVANidhi portal or a lending branch":
+    "PM स्वनिधि पोर्टल या ऋण शाखा के माध्यम से आवेदन करें",
   "Attach your certificate of vending": "अपना विक्रय प्रमाण पत्र संलग्न करें",
   "Indian citizens aged 18–40": "18–40 वर्ष के भारतीय नागरिक",
   "Holding a savings bank account": "बचत बैंक खाता रखने वाले",

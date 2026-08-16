@@ -106,7 +106,8 @@ function Documents() {
         <div className="mt-8 flex items-start gap-3 rounded-xl border border-saffron/30 bg-saffron/10 p-4 text-sm">
           <Info className="mt-0.5 size-5 shrink-0 text-saffron" />
           <span>
-            Your files are securely stored and can only be accessed by you through your authenticated account.
+            Your files are securely stored and can only be accessed by you through your
+            authenticated account.
           </span>
         </div>
         <button

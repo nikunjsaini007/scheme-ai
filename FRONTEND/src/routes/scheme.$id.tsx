@@ -16,7 +16,9 @@ export const Route = createFileRoute("/scheme/$id")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Scheme unavailable — Yojantra" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Scheme unavailable — Yojantra" }, { name: "robots", content: "noindex" }],
+      };
     }
     const { scheme } = loaderData;
     const title = `${scheme.name} — eligibility & benefits | Yojantra`;
@@ -51,15 +53,23 @@ function SchemeDetail() {
         <div className="mt-10 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              <span className="eyebrow text-saffron">{scheme.match}% {t("match")}</span>
+              <span className="eyebrow text-saffron">
+                {scheme.match}% {t("match")}
+              </span>
               <span className="eyebrow text-ink/40">{t(scheme.level)}</span>
               <span className="eyebrow text-ink/40">{t(scheme.category)}</span>
-              {scheme.year && <span className="eyebrow text-ink/40">{scheme.year} · {t(scheme.status ?? "ACTIVE")}</span>}
+              {scheme.year && (
+                <span className="eyebrow text-ink/40">
+                  {scheme.year} · {t(scheme.status ?? "ACTIVE")}
+                </span>
+              )}
             </div>
             <LineReveal
               as="h1"
               className="display mt-6 text-[14vw] leading-[0.84] lg:text-[7vw]"
-              lines={t(scheme.name).split(" ").map((w) => w)}
+              lines={t(scheme.name)
+                .split(" ")
+                .map((w) => w)}
             />
             <Reveal delay={0.2}>
               <p className="mt-8 max-w-md text-base text-ink/65">{t(scheme.summary)}</p>
@@ -68,7 +78,9 @@ function SchemeDetail() {
 
           <Reveal delay={0.15} className="lg:col-span-5">
             <div className="bg-ink p-8 text-ivory md:p-10">
-              <p className="display text-[18vw] leading-none text-saffron lg:text-[7vw]">{scheme.benefit}</p>
+              <p className="display text-[18vw] leading-none text-saffron lg:text-[7vw]">
+                {scheme.benefit}
+              </p>
               <p className="eyebrow mt-4 text-ivory/45">{t(scheme.benefitNote)}</p>
 
               {/* Conservative benefit calculator: show only when a rupee amount is present in the published benefit string. Do not invent amounts or formulas. */}
@@ -105,16 +117,26 @@ function SchemeDetail() {
                   return (
                     <div className="mt-6">
                       <p className="eyebrow text-ivory/45">{t("Estimated benefit")}</p>
-                      <p className="display mt-2 text-2xl">₹{amount.toLocaleString("en-IN")}{scheme.benefitNote ? ` · ${t(scheme.benefitNote)}` : ""}</p>
+                      <p className="display mt-2 text-2xl">
+                        ₹{amount.toLocaleString("en-IN")}
+                        {scheme.benefitNote ? ` · ${t(scheme.benefitNote)}` : ""}
+                      </p>
                     </div>
                   );
                 }
                 // If the scheme mentions percentages or conditional benefits, be explicit that calculation is not possible here.
-                if (String(scheme.benefit || "").includes("%") || String(scheme.benefit || "").toLowerCase().includes("subsidy")) {
+                if (
+                  String(scheme.benefit || "").includes("%") ||
+                  String(scheme.benefit || "")
+                    .toLowerCase()
+                    .includes("subsidy")
+                ) {
                   return (
                     <div className="mt-6">
                       <p className="eyebrow text-ivory/45">{t("Benefit calculation")}</p>
-                      <p className="mt-2 text-sm text-ivory/65">{t("Benefit depends on application assessment.")}</p>
+                      <p className="mt-2 text-sm text-ivory/65">
+                        {t("Benefit depends on application assessment.")}
+                      </p>
                     </div>
                   );
                 }
@@ -124,7 +146,9 @@ function SchemeDetail() {
               {scheme.deadlineDays && (
                 <div className="mt-8 flex items-baseline justify-between border-t border-ivory/15 pt-6">
                   <span className="eyebrow text-ivory/45">{t("Deadline")}</span>
-                  <span className="display text-3xl">{scheme.deadlineDays} {t("days")}</span>
+                  <span className="display text-3xl">
+                    {scheme.deadlineDays} {t("days")}
+                  </span>
                 </div>
               )}
 
@@ -160,7 +184,10 @@ function SchemeDetail() {
 
       <section className="bg-ivory-deep py-24">
         <div className="edge">
-          <LineReveal className="display text-[12vw] leading-[0.88] md:text-[6vw]" lines={[t("What you'll need")]} />
+          <LineReveal
+            className="display text-[12vw] leading-[0.88] md:text-[6vw]"
+            lines={[t("What you'll need")]}
+          />
           <div className="mt-12 border-t border-ink/15">
             {scheme.documents.map((d) => (
               <div key={d.name} className="border-b border-ink/12">
@@ -212,7 +239,10 @@ function SchemeDetail() {
       <section id="apply" className="edge py-24 md:py-32">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <LineReveal className="display text-[12vw] leading-[0.88] md:text-[5.4vw]" lines={[t("How to apply")]} />
+            <LineReveal
+              className="display text-[12vw] leading-[0.88] md:text-[5.4vw]"
+              lines={[t("How to apply")]}
+            />
             <ol className="mt-12 border-t border-ink/15">
               {scheme.howToApply.map((s, i) => (
                 <Reveal key={s} delay={i * 0.06}>
@@ -242,7 +272,9 @@ function SchemeDetail() {
                 <p className="display mt-2 text-2xl">{LAST_VERIFIED}</p>
               </div>
               <p className="mt-6 text-[11px] leading-relaxed text-ink/45">
-                {t("Demo data. Applications are submitted only on the official government portal — Yojantra never collects fees or processes applications.")}
+                {t(
+                  "Demo data. Applications are submitted only on the official government portal — Yojantra never collects fees or processes applications.",
+                )}
               </p>
             </div>
           </Reveal>

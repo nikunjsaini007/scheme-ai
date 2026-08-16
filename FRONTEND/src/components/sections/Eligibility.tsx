@@ -7,11 +7,23 @@ import { cn } from "@/lib/utils";
 
 const QUESTIONS = [
   { key: "AGE", options: ["18–25", "26–40", "41–60", "60+"] },
-  { key: "STATE", options: ["Haryana", "Kerala", "Maharashtra", "Tamil Nadu", "Uttar Pradesh", "Other"] },
-  { key: "OCCUPATION", options: ["Student", "Farmer", "Salaried", "Self-employed", "Homemaker", "Retired"] },
-  { key: "ANNUAL FAMILY INCOME", options: ["Below ₹1L", "₹1L – ₹2L", "₹2L – ₹5L", "₹5L – ₹8L", "Above ₹8L"] },
+  {
+    key: "STATE",
+    options: ["Haryana", "Kerala", "Maharashtra", "Tamil Nadu", "Uttar Pradesh", "Other"],
+  },
+  {
+    key: "OCCUPATION",
+    options: ["Student", "Farmer", "Salaried", "Self-employed", "Homemaker", "Retired"],
+  },
+  {
+    key: "ANNUAL FAMILY INCOME",
+    options: ["Below ₹1L", "₹1L – ₹2L", "₹2L – ₹5L", "₹5L – ₹8L", "Above ₹8L"],
+  },
   { key: "CATEGORY", options: ["General", "OBC", "SC", "ST", "EWS", "Prefer not to say"] },
-  { key: "EDUCATION", options: ["Below class 10", "Class 10–12", "Graduate", "Post-graduate", "Vocational"] },
+  {
+    key: "EDUCATION",
+    options: ["Below class 10", "Class 10–12", "Graduate", "Post-graduate", "Vocational"],
+  },
 ];
 
 export function Eligibility() {
@@ -31,10 +43,15 @@ export function Eligibility() {
 
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <LineReveal className="display text-[14vw] leading-[0.85] lg:text-[6vw]" lines={[t("Let's see"), t("what fits.")]} />
+            <LineReveal
+              className="display text-[14vw] leading-[0.85] lg:text-[6vw]"
+              lines={[t("Let's see"), t("what fits.")]}
+            />
             <Reveal delay={0.2}>
               <p className="mt-7 max-w-xs text-sm leading-relaxed text-ivory/50">
-                {t("No forms. Just a short conversation. Nothing you answer here leaves your browser in this demo.")}
+                {t(
+                  "No forms. Just a short conversation. Nothing you answer here leaves your browser in this demo.",
+                )}
               </p>
             </Reveal>
           </div>
@@ -42,10 +59,14 @@ export function Eligibility() {
           <div className="lg:col-span-7 lg:col-start-6">
             <div className="flex items-center justify-between border-b border-ivory/15 pb-4">
               <span className="eyebrow text-ivory/40">
-                {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / {String(QUESTIONS.length).padStart(2, "0")}
+                {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} /{" "}
+                {String(QUESTIONS.length).padStart(2, "0")}
               </span>
               {step > 0 && (
-                <button onClick={() => setStep((s) => s - 1)} className="eyebrow text-ivory/40 hover:text-saffron">
+                <button
+                  onClick={() => setStep((s) => s - 1)}
+                  className="eyebrow text-ivory/40 hover:text-saffron"
+                >
                   {t("← Back")}
                 </button>
               )}
@@ -53,7 +74,9 @@ export function Eligibility() {
             <div className="relative mt-1 h-px w-full bg-ivory/10">
               <motion.div
                 className="absolute inset-y-0 left-0 bg-saffron"
-                animate={{ width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%` }}
+                animate={{
+                  width: `${(Math.min(step, QUESTIONS.length) / QUESTIONS.length) * 100}%`,
+                }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
@@ -89,7 +112,9 @@ export function Eligibility() {
                     ))}
                   </div>
                   <p className="mt-10 text-[11px] tracking-wide text-ivory/30">
-                    {t("Also asked in the full flow: gender, and any special conditions such as disability or single-parent household.")}
+                    {t(
+                      "Also asked in the full flow: gender, and any special conditions such as disability or single-parent household.",
+                    )}
                   </p>
                 </motion.div>
               ) : (

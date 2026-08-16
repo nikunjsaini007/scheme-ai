@@ -14,7 +14,10 @@ export function Benefits() {
     <section id="benefits" className="bg-ivory-deep py-28 md:py-40">
       <div className="edge">
         <SectionLabel index="04" title={t("Benefit visualization")} />
-        <LineReveal className="display text-[14vw] leading-[0.85] md:text-[8vw]" lines={[t("What could"), t("you get?")]} />
+        <LineReveal
+          className="display text-[14vw] leading-[0.85] md:text-[8vw]"
+          lines={[t("What could"), t("you get?")]}
+        />
 
         <div className="mt-20 grid gap-y-14 md:grid-cols-2 lg:grid-cols-4">
           {FIGURES.map((f, i) => (
@@ -27,7 +30,9 @@ export function Benefits() {
                   decimals={f.decimals ?? 0}
                   className={`display block text-[16vw] leading-none md:text-[6vw] ${i === 0 ? "text-saffron" : "text-ink"}`}
                 />
-                <p className="mt-4 max-w-[14ch] text-[11px] tracking-[0.14em] text-ink/50 uppercase">{t(f.label)}</p>
+                <p className="mt-4 max-w-[14ch] text-[11px] tracking-[0.14em] text-ink/50 uppercase">
+                  {t(f.label)}
+                </p>
               </div>
             </Reveal>
           ))}
@@ -35,7 +40,9 @@ export function Benefits() {
 
         <Reveal>
           <p className="mt-20 max-w-lg border-t border-ink/15 pt-6 text-[12px] leading-relaxed text-ink/45">
-            {t("Estimated potential benefits based on matching schemes. These are indicative figures from mock data — not a guaranteed government payout, and not an approval of any application.")}
+            {t(
+              "Estimated potential benefits based on matching schemes. These are indicative figures from mock data — not a guaranteed government payout, and not an approval of any application.",
+            )}
           </p>
         </Reveal>
       </div>

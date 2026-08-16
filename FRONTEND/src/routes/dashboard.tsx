@@ -1,5 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Bell, FileCheck2, FileText, LogOut, MapPin, Pencil, Sparkles, UserRound } from "lucide-react";
+import {
+  Bell,
+  FileCheck2,
+  FileText,
+  LogOut,
+  MapPin,
+  Pencil,
+  Sparkles,
+  UserRound,
+  LayoutDashboard,
+} from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { getUser, profileCompletion, signOut } from "@/lib/auth";
 import { requireAuth } from "@/components/AuthGuard";
@@ -23,7 +33,9 @@ function Dashboard() {
 
   useEffect(() => {
     void listDocuments(user.id).then(setDocuments);
-    void fetchUserProfile(user.id).then(setProfile).catch(() => setProfile({ ...user }));
+    void fetchUserProfile(user.id)
+      .then(setProfile)
+      .catch(() => setProfile({ ...user }));
 
     // Fetch active schemes count (real data) — show nothing if unavailable
     void fetchActiveSchemes()
@@ -70,7 +82,11 @@ function Dashboard() {
           </button>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat icon={<Sparkles />} value={schemesCount === null ? "—" : String(schemesCount)} label="current schemes in catalogue" />
+          <Stat
+            icon={<LayoutDashboard />}
+            value={schemesCount === null ? "—" : String(schemesCount)}
+            label="current schemes in catalogue"
+          />
           <Stat
             icon={<FileCheck2 />}
             value={String(documents.filter((doc) => doc.status === "Analyzed").length)}
@@ -81,7 +97,11 @@ function Dashboard() {
             value={String(documents.filter((doc) => doc.status !== "Analyzed").length)}
             label="documents needing analysis"
           />
-          <Stat icon={<FileText />} value={savedCount === null ? "—" : String(savedCount)} label="saved schemes" />
+          <Stat
+            icon={<FileText />}
+            value={savedCount === null ? "—" : String(savedCount)}
+            label="saved schemes"
+          />
         </div>
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-2xl bg-ink p-7 text-ivory">
@@ -123,14 +143,14 @@ function Dashboard() {
             />
             <Action
               href="/my-matches"
-              icon={<Sparkles />}
+              icon={<LayoutDashboard />}
               title="Your recommendations"
               copy={
                 recommendationsCount === null
                   ? "Recommendations: Not available"
                   : recommendationsCount === 0
-                  ? "No matches yet"
-                  : `${recommendationsCount} scheme${recommendationsCount === 1 ? "" : "s"} matched to your profile`
+                    ? "No matches yet"
+                    : `${recommendationsCount} scheme${recommendationsCount === 1 ? "" : "s"} matched to your profile`
               }
             />
             <Action
@@ -156,7 +176,17 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
   );
 }
 
-function Action({ href, icon, title, copy }: { href: string; icon: React.ReactNode; title: string; copy: string }) {
+function Action({
+  href,
+  icon,
+  title,
+  copy,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  title: string;
+  copy: string;
+}) {
   return (
     <Link
       to={href}

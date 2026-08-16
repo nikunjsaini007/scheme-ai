@@ -20,11 +20,18 @@ export function Trust() {
           <SectionLabel index="02" title={t("Trust")} />
           <LineReveal
             className="display text-[11vw] leading-[0.86] md:text-[5.2vw]"
-            lines={[t("We help you find."), <span key="g" className="text-saffron">{t("The government provides.")}</span>]}
+            lines={[
+              t("We help you find."),
+              <span key="g" className="text-saffron">
+                {t("The government provides.")}
+              </span>,
+            ]}
           />
           <Reveal delay={0.25}>
             <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/60">
-              {t("Yojantra is not a government department, agent or intermediary. We don't process applications, collect fees or promise approvals. We help you understand what exists and send you to the official portal.")}
+              {t(
+                "Yojantra is not a government department, agent or intermediary. We don't process applications, collect fees or promise approvals. We help you understand what exists and send you to the official portal.",
+              )}
             </p>
           </Reveal>
         </div>

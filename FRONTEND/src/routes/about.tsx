@@ -75,9 +75,7 @@ function About() {
           <Reveal delay={0.35}>
             <p className="mt-8 text-sm text-ink/55">{t("Privacy")}:</p>
             <p className="mt-3 text-[15px] leading-relaxed text-ink/80">
-              {t(
-                " We never collect fees or process applications.",
-              )}
+              {t(" We never collect fees or process applications.")}
             </p>
           </Reveal>
 

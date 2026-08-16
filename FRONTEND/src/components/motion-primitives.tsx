@@ -119,7 +119,10 @@ export function MagneticButton({
       onMouseMove={(e) => {
         const r = ref.current?.getBoundingClientRect();
         if (!r) return;
-        setT({ x: (e.clientX - (r.left + r.width / 2)) * 0.18, y: (e.clientY - (r.top + r.height / 2)) * 0.3 });
+        setT({
+          x: (e.clientX - (r.left + r.width / 2)) * 0.18,
+          y: (e.clientY - (r.top + r.height / 2)) * 0.3,
+        });
       }}
       onMouseLeave={() => setT({ x: 0, y: 0 })}
       animate={{ x: t.x, y: t.y }}
@@ -127,7 +130,8 @@ export function MagneticButton({
       className={cn(
         "group inline-flex items-center gap-3 rounded-full px-7 py-4 text-xs font-semibold tracking-[0.16em] uppercase transition-colors duration-300",
         variant === "solid" && "bg-saffron text-white hover:bg-ink",
-        variant === "outline" && "border border-ink/25 text-ink hover:border-ink hover:bg-ink hover:text-ivory",
+        variant === "outline" &&
+          "border border-ink/25 text-ink hover:border-ink hover:bg-ink hover:text-ivory",
         variant === "light" && "border border-ivory/30 text-ivory hover:bg-ivory hover:text-ink",
         className,
       )}

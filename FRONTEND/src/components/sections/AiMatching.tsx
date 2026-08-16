@@ -18,7 +18,10 @@ export function AiMatching() {
 
   return (
     <section id="matching" ref={ref} className="edge overflow-hidden py-28 text-center md:py-44">
-      <LineReveal className="display text-[14vw] leading-[0.86] md:text-[7.5vw]" lines={[t("Reading"), t("your profile.")]} />
+      <LineReveal
+        className="display text-[14vw] leading-[0.86] md:text-[7.5vw]"
+        lines={[t("Reading"), t("your profile.")]}
+      />
 
       <div className="relative mx-auto mt-20 flex h-[320px] w-full max-w-3xl items-center justify-center md:h-[420px]">
         <motion.div
@@ -57,22 +60,25 @@ export function AiMatching() {
         })}
       </div>
 
-      <LineReveal className="display mt-10 text-[12vw] leading-none text-saffron md:text-[6vw]" lines={[t("Your matches")]} />
+      <LineReveal
+        className="display mt-10 text-[12vw] leading-none text-saffron md:text-[6vw]"
+        lines={[t("Your matches")]}
+      />
 
       <div className="mt-16 grid grid-cols-2 gap-px bg-ink/12 md:grid-cols-4">
         {STATS.map((s, i) => (
           <Reveal key={s.label} delay={i * 0.08} className="bg-ivory">
             <div className="p-6 text-left md:p-8">
               <Counter to={s.n} className="display block text-5xl md:text-6xl" />
-              <p className="mt-3 text-[11px] tracking-[0.14em] text-ink/50 uppercase">{t(s.label)}</p>
+              <p className="mt-3 text-[11px] tracking-[0.14em] text-ink/50 uppercase">
+                {t(s.label)}
+              </p>
             </div>
           </Reveal>
         ))}
       </div>
       <Reveal>
-        <p className="mt-6 text-left text-[11px] text-ink/40">
-          {t("Not a government decision.")}
-        </p>
+        <p className="mt-6 text-left text-[11px] text-ink/40">{t("Not a government decision.")}</p>
       </Reveal>
     </section>
   );

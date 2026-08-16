@@ -17,7 +17,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Yojantra — Discover the benefits meant for you" },
       {
         property: "og:description",
-        content: "Find Indian government schemes you qualify for, understand why you match, and apply officially.",
+        content:
+          "Find Indian government schemes you qualify for, understand why you match, and apply officially.",
       },
     ],
   }),

@@ -48,10 +48,10 @@ function Assistant() {
   const speakText = (text: string) => {
     try {
       if (!speakResponses) return;
-      if (!('speechSynthesis' in window)) return;
+      if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-IN';
+      utter.lang = "en-IN";
       utter.onstart = () => setSpeaking(true);
       utter.onend = () => setSpeaking(false);
       window.speechSynthesis.speak(utter);
@@ -81,7 +81,9 @@ function Assistant() {
       }
     };
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const ask = async (question: string, optSpeak = true) => {
@@ -112,16 +114,28 @@ function Assistant() {
       const text = await askAntra({
         data: {
           question: clean,
-          history: messages.map((message) => ({ role: message.user ? "user" : "model", text: message.text })),
+          history: messages.map((message) => ({
+            role: message.user ? "user" : "model",
+            text: message.text,
+          })),
           // pass authoritative DB profile (not local store) to the server
           profile: profileForAI as Record<string, string>,
-          schemes: schemes.map(({ name, summary, benefit, category, match }) => ({ name, summary, benefit, category, match })),
+          schemes: schemes.map(({ name, summary, benefit, category, match }) => ({
+            name,
+            summary,
+            benefit,
+            category,
+            match,
+          })),
         },
       });
       setMessages((items) => [...items, { id: Date.now() + 1, text, user: false }]);
       if (optSpeak) speakText(text);
     } catch (error) {
-      const errText = error instanceof Error ? error.message : "Antra is temporarily unavailable. Please try again later.";
+      const errText =
+        error instanceof Error
+          ? error.message
+          : "Antra is temporarily unavailable. Please try again later.";
       setMessages((items) => [...items, { id: Date.now() + 1, text: errText, user: false }]);
     } finally {
       setTyping(false);
@@ -140,15 +154,20 @@ function Assistant() {
       return;
     }
     if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch {}
+      try {
+        recognitionRef.current.stop();
+      } catch {}
       recognitionRef.current = null;
     }
     const recog = new SR();
-    recog.lang = 'en-IN';
+    recog.lang = "en-IN";
     recog.interimResults = false;
     recog.maxAlternatives = 1;
     recog.onresult = (ev: any) => {
-      const transcript = Array.from(ev.results).map((r: any) => r[0].transcript).join(' ').trim();
+      const transcript = Array.from(ev.results)
+        .map((r: any) => r[0].transcript)
+        .join(" ")
+        .trim();
       if (transcript) {
         ask(transcript, true);
       }
@@ -168,7 +187,9 @@ function Assistant() {
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch {}
+      try {
+        recognitionRef.current.stop();
+      } catch {}
       recognitionRef.current = null;
     }
     setListening(false);
@@ -221,7 +242,9 @@ function Assistant() {
               <p className="eyebrow text-ink/40">{t("Your context")}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {loadingProfile ? (
-                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">Loading profile…</span>
+                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">
+                    Loading profile…
+                  </span>
                 ) : dbProfile ? (
                   // Build a concise set of profile chips using only present fields
                   [
@@ -230,17 +253,50 @@ function Assistant() {
                     dbProfile.state ? String(dbProfile.state) : null,
                     dbProfile.occupation ? String(dbProfile.occupation) : null,
                     dbProfile.category ? String(dbProfile.category) : null,
-                    dbProfile.annual_income ? `Income: ₹${Number(dbProfile.annual_income).toLocaleString('en-IN')}` : null,
-                  ].filter(Boolean).map((item) => (
-                    <span key={String(item)} className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">{item}</span>
-                  ))
+                    dbProfile.annual_income
+                      ? `Income: ₹${Number(dbProfile.annual_income).toLocaleString("en-IN")}`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .map((item) => (
+                      <span
+                        key={String(item)}
+                        className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60"
+                      >
+                        {item}
+                      </span>
+                    ))
                 ) : (
-                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">No profile yet</span>
+                  <span className="rounded-full border border-ink/15 px-3 py-2 text-xs text-ink/60">
+                    No profile yet
+                  </span>
                 )}
               </div>
               <div className="mt-3 flex items-center gap-3">
-                <Link to="/personalize" className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[.16em] text-saffron uppercase hover:text-ink">{t("Personalize your context")} <ArrowRight className="size-3.5" /></Link>
-                <button onClick={async () => { setLoadingProfile(true); try { const user = getUser(); if (user) { const refreshed = await fetchUserProfile(user.id); setDbProfile(refreshed); } } catch { } finally { setLoadingProfile(false); } }} className="text-xs text-ink/50 underline">Refresh profile</button>
+                <Link
+                  to="/personalize"
+                  className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[.16em] text-saffron uppercase hover:text-ink"
+                >
+                  {t("Personalize your context")} <ArrowRight className="size-3.5" />
+                </Link>
+                <button
+                  onClick={async () => {
+                    setLoadingProfile(true);
+                    try {
+                      const user = getUser();
+                      if (user) {
+                        const refreshed = await fetchUserProfile(user.id);
+                        setDbProfile(refreshed);
+                      }
+                    } catch {
+                    } finally {
+                      setLoadingProfile(false);
+                    }
+                  }}
+                  className="text-xs text-ink/50 underline"
+                >
+                  Refresh profile
+                </button>
               </div>
             </div>
           </div>
@@ -259,7 +315,6 @@ function Assistant() {
                   </div>
                   <div>
                     <p className="text-sm font-medium">{t("Antra")}</p>
-                    
                   </div>
                 </div>
                 <button
@@ -366,7 +421,7 @@ function Assistant() {
                     <button
                       type="button"
                       onClick={() => (listening ? stopListening() : startListening())}
-                      className={`size-10 place-items-center rounded-full border border-ink/15 ${listening ? 'bg-saffron text-white' : 'text-ink/40'} hover:border-saffron hover:text-saffron sm:grid`}
+                      className={`size-10 place-items-center rounded-full border border-ink/15 ${listening ? "bg-saffron text-white" : "text-ink/40"} hover:border-saffron hover:text-saffron sm:grid`}
                       aria-label={t("Voice input")}
                     >
                       <Mic className="size-4" />
@@ -393,9 +448,7 @@ function Assistant() {
               </div>
             </div>
             <p className="mt-4 text-center text-[11px] leading-relaxed text-ink/40">
-              {t(
-                "Always verify eligibility and apply through the official government portal.",
-              )}
+              {t("Always verify eligibility and apply through the official government portal.")}
             </p>
           </div>
         </div>

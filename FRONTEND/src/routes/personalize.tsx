@@ -12,11 +12,27 @@ import { getUser, updateProfile } from "@/lib/auth";
 import { requireAuth } from "@/components/AuthGuard";
 import { fetchUserProfile, generateRecommendations } from "@/lib/schemeCatalog";
 
-const incomeValue = (value: string) => value.includes("Below") ? 100000 : value.includes("1–2.5") || value.includes("1–2.5") ? 175000 : value.includes("2.5–5") ? 375000 : value.includes("5–8") ? 650000 : value.includes("8–10") ? 900000 : value.includes("Above") ? 1000000 : Number(value) || null; // helper kept for legacy parsing
+const incomeValue = (value: string) =>
+  value.includes("Below")
+    ? 100000
+    : value.includes("1–2.5") || value.includes("1–2.5")
+      ? 175000
+      : value.includes("2.5–5")
+        ? 375000
+        : value.includes("5–8")
+          ? 650000
+          : value.includes("8–10")
+            ? 900000
+            : value.includes("Above")
+              ? 1000000
+              : Number(value) || null; // helper kept for legacy parsing
 
 export const Route = createFileRoute("/personalize")({
   beforeLoad: requireAuth,
-  head: () => ({ title: "Personalize – Yojantra", description: "Tell us about yourself to find government schemes you qualify for" }),
+  head: () => ({
+    title: "Personalize – Yojantra",
+    description: "Tell us about yourself to find government schemes you qualify for",
+  }),
   component: Personalize,
 });
 
@@ -26,7 +42,6 @@ function Personalize() {
   const { answers, stage, answer, setPersona, setStage, reset } = useProfile();
   const [question, setQuestion] = useState(0); // restore minimal step state used by the 'Start over' action
   const [saving, setSaving] = useState(false);
-
 
   // Progress overlay state for the "See my matches" flow
   const [progressVisible, setProgressVisible] = useState(false);
@@ -79,7 +94,7 @@ function Personalize() {
     (dbProfile?.age ?? answers.AGE) &&
     (answers.OCCUPATION || dbProfile?.occupation) &&
     (answers.STATE || dbProfile?.state) &&
-    (selectedIncomeNumeric ?? dbProfile?.annual_income)
+    (selectedIncomeNumeric ?? dbProfile?.annual_income),
   );
 
   useEffect(() => {
@@ -90,27 +105,32 @@ function Personalize() {
       return;
     }
     setLoadingProfile(true);
-    fetchUserProfile(user.id).then((profile) => {
-      setDbProfile(profile);
-      // Populate answers from saved profile values (do not overwrite empty values)
-      const savedAnswers: Record<string, string> = {
-        AGE: String(profile.age ?? ""),
-        OCCUPATION: String(profile.occupation ?? ""),
-        STATE: String(profile.state ?? ""),
-        CATEGORY: String(profile.category ?? ""),
-        "ANNUAL FAMILY INCOME": String(profile.annual_income ?? ""),
-      };
-      Object.entries(savedAnswers).forEach(([key, value]) => { if (value) answer(key, value); });
-      if (savedAnswers.OCCUPATION) setPersona(savedAnswers.OCCUPATION.toUpperCase());
-      // If profile_completed is true, mark stage accordingly
-      if ((profile as any).profile_completed) setStage("done");
-    }).catch((err) => {
-      // show a console message in development, but keep UX friendly
-      // leave the form in first-time state if fetch fails
-      // (the existing error handling elsewhere will surface save errors)
-      // eslint-disable-next-line no-console
-      console.error("Unable to load saved profile:", err?.message || err);
-    }).finally(() => setLoadingProfile(false));
+    fetchUserProfile(user.id)
+      .then((profile) => {
+        setDbProfile(profile);
+        // Populate answers from saved profile values (do not overwrite empty values)
+        const savedAnswers: Record<string, string> = {
+          AGE: String(profile.age ?? ""),
+          OCCUPATION: String(profile.occupation ?? ""),
+          STATE: String(profile.state ?? ""),
+          CATEGORY: String(profile.category ?? ""),
+          "ANNUAL FAMILY INCOME": String(profile.annual_income ?? ""),
+        };
+        Object.entries(savedAnswers).forEach(([key, value]) => {
+          if (value) answer(key, value);
+        });
+        if (savedAnswers.OCCUPATION) setPersona(savedAnswers.OCCUPATION.toUpperCase());
+        // If profile_completed is true, mark stage accordingly
+        if ((profile as any).profile_completed) setStage("done");
+      })
+      .catch((err) => {
+        // show a console message in development, but keep UX friendly
+        // leave the form in first-time state if fetch fails
+        // (the existing error handling elsewhere will surface save errors)
+        // eslint-disable-next-line no-console
+        console.error("Unable to load saved profile:", err?.message || err);
+      })
+      .finally(() => setLoadingProfile(false));
   }, [answer, setPersona, setStage]);
 
   // removed legacy choose/step flow — single save flow below
@@ -163,7 +183,8 @@ function Personalize() {
         occupation: occupationVal,
         annual_income: incomeVal,
         education_level: educationLevel || base.education_level || "",
-        category: (answers.CATEGORY && String(answers.CATEGORY).toLowerCase()) || base.category || "",
+        category:
+          (answers.CATEGORY && String(answers.CATEGORY).toLowerCase()) || base.category || "",
         disability_status: base.disability_status ?? null,
         marital_status: maritalStatus || base.marital_status || "",
         is_student: (occupationVal || "").toLowerCase() === "student",
@@ -193,7 +214,9 @@ function Personalize() {
       setStepIndex(4);
       setStage("matching");
 
-      const fromDashboard = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from') === 'dashboard';
+      const fromDashboard =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("from") === "dashboard";
       await router.navigate({ to: fromDashboard ? "/dashboard" : "/my-matches" });
     } catch (e: any) {
       console.error("Profile save failed:", e?.message || e, e?.code, e?.details, e?.hint);
@@ -202,16 +225,19 @@ function Personalize() {
       setSaving(false);
       setProgressVisible(false);
     }
-    };
+  };
 
-    if (loadingProfile) {
+  if (loadingProfile) {
     return (
       <main className="min-h-screen bg-ivory text-ink">
         <Nav />
         <section className="edge flex min-h-[72vh] items-center py-32">
           <div className="max-w-2xl">
             <h2 className="display text-3xl">Loading your saved profile…</h2>
-            <p className="mt-4 text-sm text-ink/60">Please wait while we load your saved personalization. You can review or update this information anytime.</p>
+            <p className="mt-4 text-sm text-ink/60">
+              Please wait while we load your saved personalization. You can review or update this
+              information anytime.
+            </p>
           </div>
         </section>
         <Footer />
@@ -224,13 +250,40 @@ function Personalize() {
       <main className="min-h-screen bg-ivory text-ink">
         <Nav />
         <section className="edge flex min-h-[72vh] items-center py-32">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl"
+          >
             <p className="eyebrow mt-8 text-saffron">{t("Your profile is ready")}</p>
-            <h1 className="display mt-4 text-6xl leading-[0.9] md:text-8xl">{t("Ready to find your benefits?")}</h1>
-            <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/60">{t("We’ll use your answers to surface schemes that are relevant to your situation. You can always change them later.")}</p>
+            <h1 className="display mt-4 text-6xl leading-[0.9] md:text-8xl">
+              {t("Ready to find your benefits?")}
+            </h1>
+            <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/60">
+              {t(
+                "We’ll use your answers to surface schemes that are relevant to your situation. You can always change them later.",
+              )}
+            </p>
             <div className="mt-10 flex flex-wrap gap-3">
-              <button onClick={() => { setStage("matching"); void router.navigate({ to: "/my-matches" }); }} className="inline-flex items-center gap-3 rounded-full bg-ink px-6 py-4 text-[11px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron">{t("Find my schemes")} <ArrowRight className="size-4" /></button>
-              <button onClick={() => { reset(); setQuestion(0); }} className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-6 py-4 text-[11px] font-semibold tracking-[.16em] text-ink/65 uppercase hover:border-saffron hover:text-saffron"><RotateCcw className="size-3.5" />{t("Start over")}</button>
+              <button
+                onClick={() => {
+                  setStage("matching");
+                  void router.navigate({ to: "/my-matches" });
+                }}
+                className="inline-flex items-center gap-3 rounded-full bg-ink px-6 py-4 text-[11px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron"
+              >
+                {t("Find my schemes")} <ArrowRight className="size-4" />
+              </button>
+              <button
+                onClick={() => {
+                  reset();
+                  setQuestion(0);
+                }}
+                className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-6 py-4 text-[11px] font-semibold tracking-[.16em] text-ink/65 uppercase hover:border-saffron hover:text-saffron"
+              >
+                <RotateCcw className="size-3.5" />
+                {t("Start over")}
+              </button>
             </div>
           </motion.div>
         </section>
@@ -246,22 +299,35 @@ function Personalize() {
         <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-black/30">
           <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-lg">
             <h3 className="text-lg font-semibold">Preparing your personalized matches</h3>
-            <p className="mt-2 text-sm text-ink/60">We’ll use your saved profile to find relevant government schemes. This may take a moment.</p>
+            <p className="mt-2 text-sm text-ink/60">
+              We’ll use your saved profile to find relevant government schemes. This may take a
+              moment.
+            </p>
             <ul className="mt-4 space-y-3">
               {stepLabels.map((label, i) => (
                 <li key={label} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`h-6 w-6 rounded-full border ${completed[i] ? "bg-verified/10 border-verified" : i === stepIndex ? "border-saffron animate-pulse" : "border-ink/15"}`} />
+                    <div
+                      className={`h-6 w-6 rounded-full border ${completed[i] ? "bg-verified/10 border-verified" : i === stepIndex ? "border-saffron animate-pulse" : "border-ink/15"}`}
+                    />
                     <div>
                       <div className="text-sm font-medium">{label}</div>
-                      {completed[i] ? <div className="text-xs text-ink/60">Completed</div> : i === stepIndex ? <div className="text-xs text-ink/60">In progress…</div> : <div className="text-xs text-ink/60">Pending</div>}
+                      {completed[i] ? (
+                        <div className="text-xs text-ink/60">Completed</div>
+                      ) : i === stepIndex ? (
+                        <div className="text-xs text-ink/60">In progress…</div>
+                      ) : (
+                        <div className="text-xs text-ink/60">Pending</div>
+                      )}
                     </div>
                   </div>
                   {completed[i] ? <div className="text-sm text-verified">✓</div> : null}
                 </li>
               ))}
             </ul>
-            {saveError && <div className="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{saveError}</div>}
+            {saveError && (
+              <div className="mt-4 rounded bg-red-50 p-3 text-sm text-red-700">{saveError}</div>
+            )}
           </div>
         </div>
       )}
@@ -271,10 +337,23 @@ function Personalize() {
           <div className="lg:col-span-5">
             <Reveal>
               <p className="eyebrow text-saffron">01 / {t("Personalization")}</p>
-              <LineReveal as="h1" className="display mt-8 text-[17vw] leading-[0.9] md:text-[9vw]" lines={[t("A better way"), t("to discover.")]} />
-              <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/55">{t("Answer a few simple questions. We’ll narrow thousands of schemes down to the ones written for people like you.")}</p>
+              <LineReveal
+                as="h1"
+                className="display mt-8 text-[17vw] leading-[0.9] md:text-[9vw]"
+                lines={[t("A better way"), t("to discover.")]}
+              />
+              <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/55">
+                {t(
+                  "Answer a few simple questions. We’ll narrow thousands of schemes down to the ones written for people like you.",
+                )}
+              </p>
             </Reveal>
-            <div className="mt-14 hidden border-t border-ink/15 pt-6 lg:block"><p className="eyebrow text-ink/35">{t("Your answers stay private")}</p><p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/55">{t("Yojantra never collects fees or processes applications.")}</p></div>
+            <div className="mt-14 hidden border-t border-ink/15 pt-6 lg:block">
+              <p className="eyebrow text-ink/35">{t("Your answers stay private")}</p>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/55">
+                {t("Yojantra never collects fees or processes applications.")}
+              </p>
+            </div>
           </div>
 
           <div className="lg:col-span-6 lg:col-start-7">
@@ -282,20 +361,32 @@ function Personalize() {
               <div>
                 <p className="eyebrow text-saffron">{t("Personalization")}</p>
                 <div className="mt-4 h-1.5 w-48 overflow-hidden rounded-full bg-ink/10 sm:w-72">
-                  <motion.div className="h-full rounded-full bg-saffron" animate={{ width: `${Math.max(progress, 0.08) * 100}%` }} />
+                  <motion.div
+                    className="h-full rounded-full bg-saffron"
+                    animate={{ width: `${Math.max(progress, 0.08) * 100}%` }}
+                  />
                 </div>
               </div>
-              <Link to="/" className="eyebrow text-ink/40 hover:text-saffron">{t("Exit")}</Link>
+              <Link to="/" className="eyebrow text-ink/40 hover:text-saffron">
+                {t("Exit")}
+              </Link>
             </div>
             <div className="rounded-2xl bg-white p-6 text-ink shadow-[0_20px_70px_-35px_rgba(17,17,17,.35)] sm:p-9">
               <p className="eyebrow text-saffron">{t("Tell us about you")}</p>
-              <h2 className="display mt-5 max-w-lg text-4xl leading-[0.92] sm:text-6xl">{t("Tell us about you")}</h2>
+              <h2 className="display mt-5 max-w-lg text-4xl leading-[0.92] sm:text-6xl">
+                {t("Tell us about you")}
+              </h2>
 
               {/* Detailed profile section (Personal Details, Location, Education & Employment, Financials) */}
               <div className="mt-6 grid gap-4">
                 <div>
                   <label className="text-xs font-semibold">Full name</label>
-                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm" placeholder="Full name" />
+                  <input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    placeholder="Full name"
+                  />
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <div>
@@ -324,7 +415,11 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">Gender</label>
-                    <select value={gender} onChange={(e) => setGender(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select</option>
                       <option value="female">Female</option>
                       <option value="male">Male</option>
@@ -334,14 +429,26 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">Pincode</label>
-                    <input value={pincode} onChange={(e) => setPincode(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm" placeholder="PIN code" />
+                    <input
+                      value={pincode}
+                      onChange={(e) => setPincode(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                      placeholder="PIN code"
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-xs font-semibold">State</label>
-                    <select value={answers.STATE || dbProfile?.state || ""} onChange={(e) => { answer("STATE", e.target.value); setDbProfile((p:any) => ({ ...p, state: e.target.value })); }} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={answers.STATE || dbProfile?.state || ""}
+                      onChange={(e) => {
+                        answer("STATE", e.target.value);
+                        setDbProfile((p: any) => ({ ...p, state: e.target.value }));
+                      }}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select state</option>
                       <option>Haryana</option>
                       <option>Maharashtra</option>
@@ -355,14 +462,26 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">District</label>
-                    <input value={district} onChange={(e) => setDistrict(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm" placeholder="District" />
+                    <input
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                      placeholder="District"
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-xs font-semibold">Occupation</label>
-                    <select value={answers.OCCUPATION || dbProfile?.occupation || ""} onChange={(e) => { answer("OCCUPATION", e.target.value); setPersona(e.target.value.toUpperCase()); }} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={answers.OCCUPATION || dbProfile?.occupation || ""}
+                      onChange={(e) => {
+                        answer("OCCUPATION", e.target.value);
+                        setPersona(e.target.value.toUpperCase());
+                      }}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select</option>
                       <option value="student">Student</option>
                       <option value="farmer">Farmer</option>
@@ -380,7 +499,11 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">Education</label>
-                    <select value={educationLevel || dbProfile?.education_level || ""} onChange={(e) => setEducationLevel(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={educationLevel || dbProfile?.education_level || ""}
+                      onChange={(e) => setEducationLevel(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select</option>
                       <option value="no_formal_education">No formal education</option>
                       <option value="primary">Primary</option>
@@ -419,7 +542,11 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">Category</label>
-                    <select value={answers.CATEGORY?.toLowerCase() || dbProfile?.category || ""} onChange={(e) => answer("CATEGORY", e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={answers.CATEGORY?.toLowerCase() || dbProfile?.category || ""}
+                      onChange={(e) => answer("CATEGORY", e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select</option>
                       <option value="general">General</option>
                       <option value="obc">OBC</option>
@@ -435,7 +562,11 @@ function Personalize() {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-xs font-semibold">Marital status</label>
-                    <select value={maritalStatus || dbProfile?.marital_status || ""} onChange={(e) => setMaritalStatus(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={maritalStatus || dbProfile?.marital_status || ""}
+                      onChange={(e) => setMaritalStatus(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="">Select</option>
                       <option value="single">Single</option>
                       <option value="married">Married</option>
@@ -447,7 +578,11 @@ function Personalize() {
                   </div>
                   <div>
                     <label className="text-xs font-semibold">Preferred language</label>
-                    <select value={preferredLanguage || dbProfile?.preferred_language || "english"} onChange={(e) => setPreferredLanguage(e.target.value)} className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm">
+                    <select
+                      value={preferredLanguage || dbProfile?.preferred_language || "english"}
+                      onChange={(e) => setPreferredLanguage(e.target.value)}
+                      className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                    >
                       <option value="english">English</option>
                       <option value="hindi">Hindi</option>
                       <option value="tamil">Tamil</option>
@@ -464,18 +599,31 @@ function Personalize() {
                     </select>
                   </div>
                 </div>
-
               </div>
 
               <div className="mt-10 flex items-center justify-between border-t border-ink/10 pt-6">
-                <Link to="/dashboard" className="eyebrow text-ink/40 hover:text-ink">{t("Cancel")}</Link>
-                <button disabled={saving || !isFormValid} onClick={() => void next()} className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[10px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron disabled:opacity-30">{saving ? "Saving…" : t("Save & See my matches")} <ArrowRight className="size-3.5" /></button>
+                <Link to="/dashboard" className="eyebrow text-ink/40 hover:text-ink">
+                  {t("Cancel")}
+                </Link>
+                <button
+                  disabled={saving || !isFormValid}
+                  onClick={() => void next()}
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[10px] font-semibold tracking-[.16em] text-ivory uppercase transition-colors hover:bg-saffron disabled:opacity-30"
+                >
+                  {saving ? "Saving…" : t("Save & See my matches")}{" "}
+                  <ArrowRight className="size-3.5" />
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <div className="border-t border-ink/10 bg-ivory-deep py-6"><div className="edge flex flex-wrap items-center justify-between gap-4"><p className="eyebrow text-ink/45">{t("No right or wrong answers")}</p><p className="text-sm text-ink/55">{t("You’re in control of your profile.")}</p></div></div>
+      <div className="border-t border-ink/10 bg-ivory-deep py-6">
+        <div className="edge flex flex-wrap items-center justify-between gap-4">
+          <p className="eyebrow text-ink/45">{t("No right or wrong answers")}</p>
+          <p className="text-sm text-ink/55">{t("You’re in control of your profile.")}</p>
+        </div>
+      </div>
       <Footer />
     </main>
   );

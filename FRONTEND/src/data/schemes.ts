@@ -84,7 +84,13 @@ export const schemes: Scheme[] = [
       "Reimbursement of non-refundable tuition and admission fees",
       "Additional allowance for hostel residents",
     ],
-    documents: [commonDocs.aadhaar, commonDocs.income, commonDocs.bank, commonDocs.education, commonDocs.caste],
+    documents: [
+      commonDocs.aadhaar,
+      commonDocs.income,
+      commonDocs.bank,
+      commonDocs.education,
+      commonDocs.caste,
+    ],
     howToApply: [
       "Register on the National Scholarship Portal with your Aadhaar",
       "Complete the student profile and select your institution",
@@ -119,7 +125,10 @@ export const schemes: Scheme[] = [
       "Land records in the applicant's name",
       "Aadhaar-linked bank account",
     ],
-    whatYouGet: ["₹2,000 transferred every four months", "Direct benefit transfer to your bank account"],
+    whatYouGet: [
+      "₹2,000 transferred every four months",
+      "Direct benefit transfer to your bank account",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.land, commonDocs.bank],
     howToApply: [
       "Visit the PM-KISAN portal or your nearest Common Service Centre",
@@ -179,13 +188,17 @@ export const schemes: Scheme[] = [
     whoCanApply: ["Indian citizens aged 15–45", "School or college students and job seekers"],
     whatYouGet: ["Free certified training", "Assessment and certification", "Placement assistance"],
     documents: [commonDocs.aadhaar, commonDocs.education],
-    howToApply: ["Find a training centre on the Skill India portal", "Enrol in a course aligned to your interest"],
+    howToApply: [
+      "Find a training centre on the Skill India portal",
+      "Enrol in a course aligned to your interest",
+    ],
     source: "Skill India — skillindiadigital.gov.in",
     criteria: [
       { label: "Age requirement", ok: true },
       { label: "Education requirement", ok: true },
     ],
-    reason: "You appear eligible because your age and education level fall inside the training criteria.",
+    reason:
+      "You appear eligible because your age and education level fall inside the training criteria.",
   },
   {
     id: "ayushman-bharat",
@@ -196,10 +209,19 @@ export const schemes: Scheme[] = [
     category: "HEALTHCARE",
     level: "CENTRAL GOVERNMENT",
     summary: "Cashless secondary and tertiary hospital care.",
-    whoCanApply: ["Families identified under the deprivation criteria", "Verified through the beneficiary database"],
-    whatYouGet: ["Cashless treatment at empanelled hospitals", "Cover for the whole family, no cap per member"],
+    whoCanApply: [
+      "Families identified under the deprivation criteria",
+      "Verified through the beneficiary database",
+    ],
+    whatYouGet: [
+      "Cashless treatment at empanelled hospitals",
+      "Cover for the whole family, no cap per member",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.income],
-    howToApply: ["Check eligibility on the PM-JAY portal", "Get your Ayushman card issued at a CSC or hospital desk"],
+    howToApply: [
+      "Check eligibility on the PM-JAY portal",
+      "Get your Ayushman card issued at a CSC or hospital desk",
+    ],
     source: "PM-JAY — pmjay.gov.in",
     criteria: [
       { label: "Household criteria", ok: true },
@@ -216,10 +238,20 @@ export const schemes: Scheme[] = [
     category: "WOMEN & CHILDREN",
     level: "CENTRAL GOVERNMENT",
     summary: "Long-term savings account for a girl child under 10.",
-    whoCanApply: ["Parent or guardian of a girl child below 10 years", "One account per girl child"],
-    whatYouGet: ["Assured interest reviewed quarterly", "Tax benefit on deposits", "Maturity after 21 years"],
+    whoCanApply: [
+      "Parent or guardian of a girl child below 10 years",
+      "One account per girl child",
+    ],
+    whatYouGet: [
+      "Assured interest reviewed quarterly",
+      "Tax benefit on deposits",
+      "Maturity after 21 years",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Open the account at a post office or authorised bank", "Deposit a minimum amount each year"],
+    howToApply: [
+      "Open the account at a post office or authorised bank",
+      "Deposit a minimum amount each year",
+    ],
     source: "India Post — indiapost.gov.in",
     criteria: [
       { label: "Girl child in family", ok: true },
@@ -236,10 +268,20 @@ export const schemes: Scheme[] = [
     category: "BUSINESS",
     level: "CENTRAL GOVERNMENT",
     summary: "Micro-credit for street vendors, in escalating tranches.",
-    whoCanApply: ["Street vendors with a certificate of vending", "Vending in urban local body limits"],
-    whatYouGet: ["Collateral-free loan", "Interest subvention on timely repayment", "Cashback on digital transactions"],
+    whoCanApply: [
+      "Street vendors with a certificate of vending",
+      "Vending in urban local body limits",
+    ],
+    whatYouGet: [
+      "Collateral-free loan",
+      "Interest subvention on timely repayment",
+      "Cashback on digital transactions",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Apply via the PM SVANidhi portal or a lending branch", "Attach your certificate of vending"],
+    howToApply: [
+      "Apply via the PM SVANidhi portal or a lending branch",
+      "Attach your certificate of vending",
+    ],
     source: "PM SVANidhi — pmsvanidhi.mohua.gov.in",
     criteria: [
       { label: "Vendor status", ok: true },
@@ -256,7 +298,11 @@ export const schemes: Scheme[] = [
     category: "SOCIAL SECURITY",
     level: "CENTRAL GOVERNMENT",
     summary: "Contributory pension for workers in the unorganised sector.",
-    whoCanApply: ["Indian citizens aged 18–40", "Holding a savings bank account", "Not an income-tax payer"],
+    whoCanApply: [
+      "Indian citizens aged 18–40",
+      "Holding a savings bank account",
+      "Not an income-tax payer",
+    ],
     whatYouGet: ["Guaranteed pension from age 60", "Spouse pension on death of subscriber"],
     documents: [commonDocs.aadhaar, commonDocs.bank],
     howToApply: ["Enrol through your bank or post office", "Set up auto-debit for contributions"],
@@ -276,14 +322,28 @@ export const schemes: Scheme[] = [
     category: "EMPLOYMENT",
     level: "CENTRAL GOVERNMENT",
     summary: "Support announced for the socio-economic upliftment of urban workers.",
-    whoCanApply: ["Urban workers in vulnerable occupations", "Applicants meeting the notified programme criteria"],
-    whatYouGet: ["Livelihood and income support", "Access to skills and capacity building", "Support through implementing agencies"],
+    whoCanApply: [
+      "Urban workers in vulnerable occupations",
+      "Applicants meeting the notified programme criteria",
+    ],
+    whatYouGet: [
+      "Livelihood and income support",
+      "Access to skills and capacity building",
+      "Support through implementing agencies",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Wait for the implementing ministry to publish operational guidelines", "Apply through the notified urban local body or official portal"],
+    howToApply: [
+      "Wait for the implementing ministry to publish operational guidelines",
+      "Apply through the notified urban local body or official portal",
+    ],
     source: "Union Budget 2025-26 — indiabudget.gov.in",
     sourceUrl: "https://www.indiabudget.gov.in/budget2025-26/doc/Budget_Speech.pdf",
-    criteria: [{ label: "Urban worker status", ok: true }, { label: "Operational guidelines published", ok: false }],
-    reason: "This is a 2025 budget announcement; final eligibility and application details depend on notified guidelines.",
+    criteria: [
+      { label: "Urban worker status", ok: true },
+      { label: "Operational guidelines published", ok: false },
+    ],
+    reason:
+      "This is a 2025 budget announcement; final eligibility and application details depend on notified guidelines.",
     year: 2025,
     status: "ANNOUNCED",
     period: "FY 2025-26",
@@ -296,15 +356,29 @@ export const schemes: Scheme[] = [
     benefitNote: "PM-JAY access for eligible gig workers",
     category: "SOCIAL SECURITY",
     level: "CENTRAL GOVERNMENT",
-    summary: "A 2025 budget measure for identity, registration, and healthcare access for gig workers.",
-    whoCanApply: ["Workers earning through online platforms", "Workers registered through the e-Shram process"],
-    whatYouGet: ["Identity card and registration support", "Healthcare access under PM Jan Arogya Yojana when eligible"],
+    summary:
+      "A 2025 budget measure for identity, registration, and healthcare access for gig workers.",
+    whoCanApply: [
+      "Workers earning through online platforms",
+      "Workers registered through the e-Shram process",
+    ],
+    whatYouGet: [
+      "Identity card and registration support",
+      "Healthcare access under PM Jan Arogya Yojana when eligible",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Register on the e-Shram portal when the facility is available", "Follow the official PM-JAY or e-Shram instructions"],
+    howToApply: [
+      "Register on the e-Shram portal when the facility is available",
+      "Follow the official PM-JAY or e-Shram instructions",
+    ],
     source: "Union Budget 2025-26 — indiabudget.gov.in",
     sourceUrl: "https://www.indiabudget.gov.in/budget2025-26/doc/Budget_Speech.pdf",
-    criteria: [{ label: "Platform worker status", ok: true }, { label: "e-Shram registration", ok: false }],
-    reason: "This measure was announced in Budget 2025-26; access depends on the official registration and implementation process.",
+    criteria: [
+      { label: "Platform worker status", ok: true },
+      { label: "e-Shram registration", ok: false },
+    ],
+    reason:
+      "This measure was announced in Budget 2025-26; access depends on the official registration and implementation process.",
     year: 2025,
     status: "ANNOUNCED",
     period: "FY 2025-26",
@@ -317,15 +391,26 @@ export const schemes: Scheme[] = [
     benefitNote: "Rural employment guarantee framework",
     category: "EMPLOYMENT",
     level: "CENTRAL GOVERNMENT",
-    summary: "Viksit Bharat–Guarantee for Rozgar and Ajeevika Mission (Gramin), listed in the 2026-27 budget documents.",
-    whoCanApply: ["Rural households seeking wage employment", "Applicants meeting the notified rural employment criteria"],
+    summary:
+      "Viksit Bharat–Guarantee for Rozgar and Ajeevika Mission (Gramin), listed in the 2026-27 budget documents.",
+    whoCanApply: [
+      "Rural households seeking wage employment",
+      "Applicants meeting the notified rural employment criteria",
+    ],
     whatYouGet: ["Demand-driven rural wage employment", "Livelihood and community asset support"],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Contact your Gram Panchayat or programme office", "Submit a demand for work under the notified process"],
+    howToApply: [
+      "Contact your Gram Panchayat or programme office",
+      "Submit a demand for work under the notified process",
+    ],
     source: "Notes on Demands for Grants 2026-27 — indiabudget.gov.in",
     sourceUrl: "https://www.indiabudget.gov.in/doc/eb/sbe87.pdf",
-    criteria: [{ label: "Rural household", ok: true }, { label: "Programme process notified locally", ok: false }],
-    reason: "The 2026 budget documents list VB-G RAM G; local implementation and application rules should be checked before applying.",
+    criteria: [
+      { label: "Rural household", ok: true },
+      { label: "Programme process notified locally", ok: false },
+    ],
+    reason:
+      "The 2026 budget documents list VB-G RAM G; local implementation and application rules should be checked before applying.",
     year: 2026,
     status: "ACTIVE",
     period: "FY 2026-27",
@@ -339,14 +424,28 @@ export const schemes: Scheme[] = [
     category: "HOUSING",
     level: "CENTRAL GOVERNMENT",
     summary: "Additional rural housing support approved for the 2025-26 to 2028-29 period.",
-    whoCanApply: ["Eligible rural households without a pucca house", "Households selected under the official PMAY-G criteria"],
-    whatYouGet: ["Assistance towards construction of a pucca house", "Basic amenities through scheme convergence"],
+    whoCanApply: [
+      "Eligible rural households without a pucca house",
+      "Households selected under the official PMAY-G criteria",
+    ],
+    whatYouGet: [
+      "Assistance towards construction of a pucca house",
+      "Basic amenities through scheme convergence",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Check your household status with the Gram Panchayat", "Follow the PMAY-G beneficiary verification process"],
+    howToApply: [
+      "Check your household status with the Gram Panchayat",
+      "Follow the PMAY-G beneficiary verification process",
+    ],
     source: "Notes on Demands for Grants 2026-27 — indiabudget.gov.in",
     sourceUrl: "https://www.indiabudget.gov.in/doc/eb/sbe87.pdf",
-    criteria: [{ label: "Rural household", ok: true }, { label: "No pucca house", ok: true }, { label: "Beneficiary list verification", ok: false }],
-    reason: "The expansion covers additional rural houses through 2028-29; final selection remains subject to official beneficiary verification.",
+    criteria: [
+      { label: "Rural household", ok: true },
+      { label: "No pucca house", ok: true },
+      { label: "Beneficiary list verification", ok: false },
+    ],
+    reason:
+      "The expansion covers additional rural houses through 2028-29; final selection remains subject to official beneficiary verification.",
     year: 2026,
     status: "ACTIVE",
     period: "2025-26 to 2028-29",
@@ -359,15 +458,30 @@ export const schemes: Scheme[] = [
     benefitNote: "Credit support in two tranches",
     category: "BUSINESS",
     level: "CENTRAL GOVERNMENT",
-    summary: "The PM Vishwakarma programme has a five-year financial outlay through FY 2027-28 for traditional artisans and craftspeople.",
-    whoCanApply: ["Traditional artisans and craftspeople", "Applicants working with their hands and tools in a notified trade"],
-    whatYouGet: ["Skill training and toolkit support", "Collateral-free credit support", "Branding and market linkage assistance"],
+    summary:
+      "The PM Vishwakarma programme has a five-year financial outlay through FY 2027-28 for traditional artisans and craftspeople.",
+    whoCanApply: [
+      "Traditional artisans and craftspeople",
+      "Applicants working with their hands and tools in a notified trade",
+    ],
+    whatYouGet: [
+      "Skill training and toolkit support",
+      "Collateral-free credit support",
+      "Branding and market linkage assistance",
+    ],
     documents: [commonDocs.aadhaar, commonDocs.bank],
-    howToApply: ["Visit a Common Service Centre for registration", "Complete trade verification and follow the official PM Vishwakarma process"],
+    howToApply: [
+      "Visit a Common Service Centre for registration",
+      "Complete trade verification and follow the official PM Vishwakarma process",
+    ],
     source: "PM Vishwakarma — msme.gov.in / indiabudget.gov.in",
     sourceUrl: "https://www.indiabudget.gov.in/budget2025-26/doc/eb/sbe68.pdf",
-    criteria: [{ label: "Notified artisan trade", ok: true }, { label: "Trade verification", ok: false }],
-    reason: "This is a future programme window based on the scheme's approved five-year period; availability and targets may change with future notifications.",
+    criteria: [
+      { label: "Notified artisan trade", ok: true },
+      { label: "Trade verification", ok: false },
+    ],
+    reason:
+      "This is a future programme window based on the scheme's approved five-year period; availability and targets may change with future notifications.",
     year: 2027,
     status: "UPCOMING",
     period: "FY 2027-28",
@@ -377,15 +491,110 @@ export const schemes: Scheme[] = [
 export const getScheme = (id: string) => schemes.find((s) => s.id === id);
 
 export const personas = [
-  { icon: "🎓", label: "STUDENT", benefits: ["Scholarships", "Education support", "Skill development", "Hostel assistance", "Loan subsidies", "Internships", "State schemes"] },
-  { icon: "🌾", label: "FARMER", benefits: ["Income support", "Crop insurance", "Soil health", "Irrigation subsidy", "Kisan credit", "Equipment support", "State schemes"] },
-  { icon: "👩", label: "WOMAN", benefits: ["Self-employment", "Maternity benefit", "Girl child savings", "Safety & shelter", "Skill training", "Group lending"] },
-  { icon: "💼", label: "PROFESSIONAL", benefits: ["Pension schemes", "Housing subsidy", "Health cover", "Tax-linked savings", "Upskilling"] },
-  { icon: "🏪", label: "ENTREPRENEUR", benefits: ["Mudra loans", "Stand-Up India", "Working capital", "Cluster support", "Export assistance"] },
-  { icon: "👴", label: "SENIOR CITIZEN", benefits: ["Old age pension", "Health cover", "Senior savings", "Assistive devices", "Travel concessions"] },
-  { icon: "♿", label: "PERSON WITH DISABILITY", benefits: ["Assistive devices", "Scholarships", "Employment support", "Travel concessions", "Home modification"] },
-  { icon: "🏠", label: "FAMILY", benefits: ["Housing support", "Ration entitlements", "Health cover", "Cooking gas", "Child nutrition"] },
-  { icon: "🔧", label: "WORKER", benefits: ["Provident fund", "Accident cover", "Skill certification", "Vishwakarma support", "Welfare board benefits"] },
+  {
+    icon: "🎓",
+    label: "STUDENT",
+    benefits: [
+      "Scholarships",
+      "Education support",
+      "Skill development",
+      "Hostel assistance",
+      "Loan subsidies",
+      "Internships",
+      "State schemes",
+    ],
+  },
+  {
+    icon: "🌾",
+    label: "FARMER",
+    benefits: [
+      "Income support",
+      "Crop insurance",
+      "Soil health",
+      "Irrigation subsidy",
+      "Kisan credit",
+      "Equipment support",
+      "State schemes",
+    ],
+  },
+  {
+    icon: "👩",
+    label: "WOMAN",
+    benefits: [
+      "Self-employment",
+      "Maternity benefit",
+      "Girl child savings",
+      "Safety & shelter",
+      "Skill training",
+      "Group lending",
+    ],
+  },
+  {
+    icon: "💼",
+    label: "PROFESSIONAL",
+    benefits: [
+      "Pension schemes",
+      "Housing subsidy",
+      "Health cover",
+      "Tax-linked savings",
+      "Upskilling",
+    ],
+  },
+  {
+    icon: "🏪",
+    label: "ENTREPRENEUR",
+    benefits: [
+      "Mudra loans",
+      "Stand-Up India",
+      "Working capital",
+      "Cluster support",
+      "Export assistance",
+    ],
+  },
+  {
+    icon: "👴",
+    label: "SENIOR CITIZEN",
+    benefits: [
+      "Old age pension",
+      "Health cover",
+      "Senior savings",
+      "Assistive devices",
+      "Travel concessions",
+    ],
+  },
+  {
+    icon: "♿",
+    label: "PERSON WITH DISABILITY",
+    benefits: [
+      "Assistive devices",
+      "Scholarships",
+      "Employment support",
+      "Travel concessions",
+      "Home modification",
+    ],
+  },
+  {
+    icon: "🏠",
+    label: "FAMILY",
+    benefits: [
+      "Housing support",
+      "Ration entitlements",
+      "Health cover",
+      "Cooking gas",
+      "Child nutrition",
+    ],
+  },
+  {
+    icon: "🔧",
+    label: "WORKER",
+    benefits: [
+      "Provident fund",
+      "Accident cover",
+      "Skill certification",
+      "Vishwakarma support",
+      "Welfare board benefits",
+    ],
+  },
 ];
 
 export const categories = [
@@ -402,14 +611,42 @@ export const categories = [
 ];
 
 export const states = [
-  { name: "HARYANA", count: 147, top: ["EDUCATION", "AGRICULTURE", "EMPLOYMENT", "WOMEN", "HOUSING"] },
-  { name: "KERALA", count: 163, top: ["HEALTHCARE", "EDUCATION", "FISHERIES", "WOMEN", "SOCIAL SECURITY"] },
-  { name: "MAHARASHTRA", count: 208, top: ["AGRICULTURE", "BUSINESS", "HOUSING", "EDUCATION", "SKILLS"] },
-  { name: "TAMIL NADU", count: 191, top: ["EDUCATION", "WOMEN", "HEALTHCARE", "EMPLOYMENT", "HOUSING"] },
-  { name: "UTTAR PRADESH", count: 224, top: ["AGRICULTURE", "HOUSING", "EDUCATION", "SOCIAL SECURITY", "SKILLS"] },
+  {
+    name: "HARYANA",
+    count: 147,
+    top: ["EDUCATION", "AGRICULTURE", "EMPLOYMENT", "WOMEN", "HOUSING"],
+  },
+  {
+    name: "KERALA",
+    count: 163,
+    top: ["HEALTHCARE", "EDUCATION", "FISHERIES", "WOMEN", "SOCIAL SECURITY"],
+  },
+  {
+    name: "MAHARASHTRA",
+    count: 208,
+    top: ["AGRICULTURE", "BUSINESS", "HOUSING", "EDUCATION", "SKILLS"],
+  },
+  {
+    name: "TAMIL NADU",
+    count: 191,
+    top: ["EDUCATION", "WOMEN", "HEALTHCARE", "EMPLOYMENT", "HOUSING"],
+  },
+  {
+    name: "UTTAR PRADESH",
+    count: 224,
+    top: ["AGRICULTURE", "HOUSING", "EDUCATION", "SOCIAL SECURITY", "SKILLS"],
+  },
   { name: "LADAKH", count: 61, top: ["TOURISM", "AGRICULTURE", "EDUCATION", "SOLAR", "HOUSING"] },
-  { name: "WEST BENGAL", count: 176, top: ["EDUCATION", "WOMEN", "AGRICULTURE", "HEALTHCARE", "SKILLS"] },
-  { name: "GUJARAT", count: 182, top: ["BUSINESS", "AGRICULTURE", "SKILLS", "HOUSING", "EDUCATION"] },
+  {
+    name: "WEST BENGAL",
+    count: 176,
+    top: ["EDUCATION", "WOMEN", "AGRICULTURE", "HEALTHCARE", "SKILLS"],
+  },
+  {
+    name: "GUJARAT",
+    count: 182,
+    top: ["BUSINESS", "AGRICULTURE", "SKILLS", "HOUSING", "EDUCATION"],
+  },
 ];
 
 export const demoPersona = {

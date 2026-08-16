@@ -14,7 +14,10 @@ export function Journey() {
   return (
     <section className="bg-ink py-28 text-ivory md:py-40">
       <div className="edge">
-        <LineReveal className="display text-[12vw] leading-[0.88] md:text-[6vw]" lines={[t("From curious"), t("to applied.")]} />
+        <LineReveal
+          className="display text-[12vw] leading-[0.88] md:text-[6vw]"
+          lines={[t("From curious"), t("to applied.")]}
+        />
       </div>
       <div className="mt-16 flex snap-x gap-px overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {STEPS.map((s, i) => (
@@ -24,7 +27,9 @@ export function Journey() {
             className="min-w-[78vw] shrink-0 snap-start border-l border-ivory/15 sm:min-w-[46vw] lg:min-w-[26vw]"
           >
             <div className="h-full px-6 md:px-9">
-              <p className="display text-[22vw] leading-[0.8] text-saffron/90 md:text-[9vw]">{s.n}</p>
+              <p className="display text-[22vw] leading-[0.8] text-saffron/90 md:text-[9vw]">
+                {s.n}
+              </p>
               <h3 className="display mt-6 text-2xl md:text-3xl">{t(s.t)}</h3>
               <p className="mt-4 max-w-[26ch] text-sm text-ivory/55">{t(s.d)}</p>
             </div>

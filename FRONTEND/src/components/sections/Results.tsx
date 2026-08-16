@@ -54,10 +54,15 @@ export function Results() {
         </Reveal>
       )}
 
-      <LineReveal className="display text-[15vw] leading-[0.85] md:text-[8vw]" lines={[t("These"), t("are for you.")]} />
+      <LineReveal
+        className="display text-[15vw] leading-[0.85] md:text-[8vw]"
+        lines={[t("These"), t("are for you.")]}
+      />
       <Reveal delay={0.2}>
         <p className="mt-7 max-w-md text-sm leading-relaxed text-ink/55">
-          {t("Mock results, ranked by how closely a scheme's stated criteria line up with the profile above.")}
+          {t(
+            "Mock results, ranked by how closely a scheme's stated criteria line up with the profile above.",
+          )}
         </p>
       </Reveal>
 
@@ -73,11 +78,17 @@ export function Results() {
           <div className="flex items-center justify-between">
             <MatchBadge value={feature.match} />
             {feature.deadlineDays && (
-              <span className="eyebrow text-ivory/45">{t("Deadline")} · {feature.deadlineDays} {t("days")}</span>
+              <span className="eyebrow text-ivory/45">
+                {t("Deadline")} · {feature.deadlineDays} {t("days")}
+              </span>
             )}
           </div>
-          <p className="display mt-10 text-[22vw] leading-[0.8] text-saffron md:text-[9vw]">{feature.benefit}</p>
-          <p className="eyebrow mt-4 text-ivory/45">{t(feature.benefitNote.replace("Maximum", "Potential"))}</p>
+          <p className="display mt-10 text-[22vw] leading-[0.8] text-saffron md:text-[9vw]">
+            {feature.benefit}
+          </p>
+          <p className="eyebrow mt-4 text-ivory/45">
+            {t(feature.benefitNote.replace("Maximum", "Potential"))}
+          </p>
           <h3 className="display mt-10 text-4xl md:text-6xl">{t(feature.name)}</h3>
           <p className="mt-4 max-w-sm text-sm text-ivory/65">{t(feature.summary)}</p>
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-ivory/15 pt-6">
@@ -181,7 +192,9 @@ export function Results() {
               to="/scheme/$id"
               params={{ id: s.id }}
               className={`group flex h-full flex-col justify-between p-7 transition-colors duration-500 md:p-9 ${
-                i % 3 === 1 ? "bg-ivory-deep hover:bg-ink hover:text-ivory" : "bg-white hover:bg-saffron hover:text-white"
+                i % 3 === 1
+                  ? "bg-ivory-deep hover:bg-ink hover:text-ivory"
+                  : "bg-white hover:bg-saffron hover:text-white"
               }`}
             >
               <div>
@@ -193,7 +206,9 @@ export function Results() {
               </div>
               <div className="mt-10">
                 <p className="display text-5xl">{s.benefit}</p>
-                <p className="mt-2 text-[10px] tracking-[0.16em] uppercase opacity-55">{t(s.benefitNote)}</p>
+                <p className="mt-2 text-[10px] tracking-[0.16em] uppercase opacity-55">
+                  {t(s.benefitNote)}
+                </p>
                 <p className="mt-6 border-t border-current/15 pt-4 text-[10px] tracking-[0.16em] uppercase opacity-55">
                   {t(s.category)}
                 </p>

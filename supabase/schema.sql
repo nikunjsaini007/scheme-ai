@@ -3,6 +3,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   name text not null default '', email text not null default '', location text default '',
   age text default '', occupation text default '', income text default '', category text default '',
+  gender text, state text, district text, pincode text, annual_income text, education_level text, disability_status text, marital_status text, is_student text,
   created_at timestamptz not null default now(), updated_at timestamptz not null default now()
 );
 create table if not exists public.documents (

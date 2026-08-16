@@ -17,10 +17,15 @@ export function Assistant() {
 
       <div className="grid gap-14 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <LineReveal className="display text-[22vw] leading-[0.84] lg:text-[9vw]" lines={[t("Just"), t("ask.")]} />
+          <LineReveal
+            className="display text-[22vw] leading-[0.84] lg:text-[9vw]"
+            lines={[t("Just"), t("ask.")]}
+          />
           <Reveal delay={0.2}>
             <p className="mt-8 max-w-xs text-sm leading-relaxed text-ink/55">
-              {t("Government schemes don't have to sound complicated. Speak or type in English, Hindi or Hinglish.")}
+              {t(
+                "Government schemes don't have to sound complicated. Speak or type in English, Hindi or Hinglish.",
+              )}
             </p>
           </Reveal>
 
@@ -62,7 +67,9 @@ export function Assistant() {
                 </motion.p>
               )}
             </AnimatePresence>
-            <p className="mt-4 text-[11px] tracking-[0.14em] text-ink/35 uppercase">English · हिन्दी · Hinglish</p>
+            <p className="mt-4 text-[11px] tracking-[0.14em] text-ink/35 uppercase">
+              English · हिन्दी · Hinglish
+            </p>
           </Reveal>
         </div>
 
@@ -71,7 +78,9 @@ export function Assistant() {
             <div className="ml-auto max-w-lg bg-ink px-6 py-5 text-ivory">
               <p className="eyebrow text-ivory/40">{t("You")}</p>
               <p className="mt-3 text-[15px] leading-relaxed">
-                {t("I am a 20 year old engineering student from Haryana. My family income is ₹3 lakh. What can I get?")}
+                {t(
+                  "I am a 20 year old engineering student from Haryana. My family income is ₹3 lakh. What can I get?",
+                )}
               </p>
             </div>
           </Reveal>
@@ -96,14 +105,18 @@ export function Assistant() {
                     <span className="display text-2xl text-saffron">{s.match}%</span>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">{t(s.name)}</p>
-                      <p className="text-[11px] tracking-[0.14em] text-ink/40 uppercase">{t(s.category)}</p>
+                      <p className="text-[11px] tracking-[0.14em] text-ink/40 uppercase">
+                        {t(s.category)}
+                      </p>
                     </div>
                     <span className="display ml-auto shrink-0 text-lg">{s.benefit}</span>
                   </motion.div>
                 ))}
               </div>
 
-              <p className="mt-6 text-[15px] text-ink/85">{t("Want me to explain the best one?")}</p>
+              <p className="mt-6 text-[15px] text-ink/85">
+                {t("Want me to explain the best one?")}
+              </p>
               <p className="mt-5 border-t border-ink/10 pt-4 text-[11px] text-ink/40">
                 {t("Yojantra explains scheme criteria — it never decides your application.")}
               </p>

@@ -4,8 +4,24 @@ import { useT } from "@/lib/i18n";
 import { useLang } from "@/store/useLang";
 
 const COLS = [
-  { title: "Product", links: [{ label: "Discover Schemes", to: "/schemes" }, { label: "Eligibility Check", to: "/personalize" }, { label: "AI Assistant", to: "/assistant" }, { label: "Saved Schemes", to: "/saved" }] },
-  { title: "Company", links: [{ label: "About", to: "/about" }, { label: "Privacy", to: "/about" }, { label: "Terms", to: "/about" }, { label: "Accessibility", to: "/about" }] },
+  {
+    title: "Product",
+    links: [
+      { label: "Discover Schemes", to: "/schemes" },
+      { label: "Eligibility Check", to: "/personalize" },
+      { label: "AI Assistant", to: "/assistant" },
+      { label: "Saved Schemes", to: "/saved" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", to: "/about" },
+      { label: "Privacy", to: "/about" },
+      { label: "Terms", to: "/about" },
+      { label: "Accessibility", to: "/about" },
+    ],
+  },
 ];
 
 export function Footer() {
@@ -16,7 +32,14 @@ export function Footer() {
       <div className="edge">
         <LineReveal
           className="display text-[19vw] leading-[0.82] md:text-[11vw]"
-          lines={[t("Know"), t("what's"), t("meant"), <span key="f" className="text-saffron">{t("for you.")}</span>]}
+          lines={[
+            t("Know"),
+            t("what's"),
+            t("meant"),
+            <span key="f" className="text-saffron">
+              {t("for you.")}
+            </span>,
+          ]}
         />
 
         <div className="mt-24 grid gap-12 border-t border-ivory/15 pt-12 md:grid-cols-12">
@@ -25,7 +48,9 @@ export function Footer() {
               YOJANTRA<span className="text-saffron">.</span>
             </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/55">
-              {t("AI-powered government scheme discovery for India. Yojana + intelligent technology.")}
+              {t(
+                "AI-powered government scheme discovery for India. Yojana + intelligent technology.",
+              )}
             </p>
             <p className="mt-6 text-[11px] leading-relaxed text-ivory/35">
               {t("Independent platform. Not affiliated with any government department.")}
@@ -38,7 +63,12 @@ export function Footer() {
               <ul className="mt-5 space-y-2.5">
                 {c.links.map((l) => (
                   <li key={l.label}>
-                    <Link to={l.to} className="text-sm text-ivory/70 transition-colors hover:text-saffron">{t(l.label)}</Link>
+                    <Link
+                      to={l.to}
+                      className="text-sm text-ivory/70 transition-colors hover:text-saffron"
+                    >
+                      {t(l.label)}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -49,12 +79,18 @@ export function Footer() {
             <p className="eyebrow text-ivory/35">{t("Language")}</p>
             <ul className="mt-5 space-y-2.5 text-sm text-ivory/70">
               <li>
-                <button onClick={() => setLang("en")} className="transition-colors hover:text-saffron">
+                <button
+                  onClick={() => setLang("en")}
+                  className="transition-colors hover:text-saffron"
+                >
                   English
                 </button>
               </li>
               <li>
-                <button onClick={() => setLang("hi")} className="transition-colors hover:text-saffron">
+                <button
+                  onClick={() => setLang("hi")}
+                  className="transition-colors hover:text-saffron"
+                >
                   हिन्दी
                 </button>
               </li>

@@ -48,7 +48,12 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
       const user = getUser();
       if (!user) return;
       try {
-        const { data, error } = await supabase.from("inbox_entries").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20);
+        const { data, error } = await supabase
+          .from("inbox_entries")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(20);
         if (error) {
           // treat missing table or other errors as empty inbox
           console.error("Inbox fetch failed:", error);
@@ -59,7 +64,9 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
         }
         if (!mounted) return;
         setNotifications((data as any) || []);
-        setUnreadCount(((data as any) || []).filter((n: any) => !n.is_read && n.is_read !== true).length);
+        setUnreadCount(
+          ((data as any) || []).filter((n: any) => !n.is_read && n.is_read !== true).length,
+        );
       } catch (e) {
         console.error("Inbox fetch failed:", e);
         if (!mounted) return;
@@ -69,7 +76,10 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
     };
     loadNotifications();
     const sub = setInterval(loadNotifications, 60 * 1000);
-    return () => { mounted = false; clearInterval(sub); };
+    return () => {
+      mounted = false;
+      clearInterval(sub);
+    };
   }, []);
 
   const markAsRead = async (id: string) => {
@@ -83,7 +93,11 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
     const user = getUser();
     if (!user) return;
     try {
-      await supabase.from("inbox_entries").update({ is_read: true }).eq("user_id", user.id).eq("is_read", false);
+      await supabase
+        .from("inbox_entries")
+        .update({ is_read: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false);
       setNotifications((cur) => cur.map((n) => ({ ...n, is_read: true })));
       setUnreadCount(0);
     } catch (e) {}
@@ -105,12 +119,17 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
       >
         <div className="edge flex h-16 items-center justify-between gap-6 md:h-20">
           <Link to="/" className={cn("flex items-center gap-3", dark && "text-ivory")}>
-            <span className="display text-xl tracking-[-0.02em] md:text-2xl">YOJANTRA<span className="text-saffron">.</span></span>
+            <span className="display text-xl tracking-[-0.02em] md:text-2xl">
+              YOJANTRA<span className="text-saffron">.</span>
+            </span>
             <span className="hidden h-9 w-px bg-ink/15 sm:block" aria-hidden="true" />
             <img
               src={govtOfIndia}
               alt="Government of India"
-              className={cn("hidden h-9 w-10 object-contain mix-blend-multiply sm:block", dark && "rounded bg-white mix-blend-normal")}
+              className={cn(
+                "hidden h-9 w-10 object-contain mix-blend-multiply sm:block",
+                dark && "rounded bg-white mix-blend-normal",
+              )}
             />
           </Link>
 
@@ -119,7 +138,10 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
               <Link
                 key={l.label}
                 to={l.to}
-                className={cn("eyebrow transition-colors hover:text-saffron", dark ? "text-ivory/65" : "text-ink/60")}
+                className={cn(
+                  "eyebrow transition-colors hover:text-saffron",
+                  dark ? "text-ivory/65" : "text-ink/60",
+                )}
               >
                 {t(l.label)}
               </Link>
@@ -129,48 +151,88 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
           <div className="hidden items-center gap-5 lg:flex xl:gap-7">
             <button
               onClick={toggle}
-              className={cn("eyebrow cursor-pointer transition-colors", dark ? "text-ivory/65 hover:text-ivory" : "text-ink/60 hover:text-ink")}
+              className={cn(
+                "eyebrow cursor-pointer transition-colors",
+                dark ? "text-ivory/65 hover:text-ivory" : "text-ink/60 hover:text-ink",
+              )}
               aria-label="Switch language"
             >
-              <span className={lang === "en" ? "text-saffron" : ""}>EN</span>{" "}
-              / <span className={lang === "hi" ? "text-saffron" : ""}>हि</span>
+              <span className={lang === "en" ? "text-saffron" : ""}>EN</span> /{" "}
+              <span className={lang === "hi" ? "text-saffron" : ""}>हि</span>
             </button>
-            <Link to="/assistant" className={cn("eyebrow flex items-center gap-2", dark ? "text-ivory/65 hover:text-ivory" : "text-ink/60 hover:text-ink")}>
+            <Link
+              to="/assistant"
+              className={cn(
+                "eyebrow flex items-center gap-2",
+                dark ? "text-ivory/65 hover:text-ivory" : "text-ink/60 hover:text-ink",
+              )}
+            >
               <Mic className="size-3.5" strokeWidth={2.2} /> {t("AI ASSISTANT")}
             </Link>
             <Link
               to="/personalize"
-              className={cn("rounded-full px-5 py-2.5 text-[11px] font-semibold tracking-[0.16em] uppercase transition-colors hover:bg-saffron", dark ? "bg-saffron text-white hover:bg-ivory hover:text-ink" : "bg-ink text-ivory")}
+              className={cn(
+                "rounded-full px-5 py-2.5 text-[11px] font-semibold tracking-[0.16em] uppercase transition-colors hover:bg-saffron",
+                dark ? "bg-saffron text-white hover:bg-ivory hover:text-ink" : "bg-ink text-ivory",
+              )}
             >
               {t("Check eligibility")}
             </Link>
             {clientUser ? (
               <>
                 <div className="relative">
-                  <button onClick={() => setNotifOpen((s) => !s)} className="text-ink/60 hover:text-saffron" aria-label="Notifications">
+                  <button
+                    onClick={() => setNotifOpen((s) => !s)}
+                    className="text-ink/60 hover:text-saffron"
+                    aria-label="Notifications"
+                  >
                     <Bell className="size-5" />
-                    {unreadCount > 0 && <span className="absolute -right-2 -top-1 inline-flex items-center justify-center rounded-full bg-saffron px-1 text-[11px] font-semibold text-white">{unreadCount}</span>}
+                    {unreadCount > 0 && (
+                      <span className="absolute -right-2 -top-1 inline-flex items-center justify-center rounded-full bg-saffron px-1 text-[11px] font-semibold text-white">
+                        {unreadCount}
+                      </span>
+                    )}
                   </button>
 
                   {notifOpen && (
                     <div className="absolute right-0 mt-3 w-[320px] rounded-lg bg-white p-4 shadow-lg z-50 text-ink">
                       <div className="flex items-center justify-between">
                         <p className="font-semibold">Notifications</p>
-                        <button onClick={() => void markAllRead()} className="text-sm text-ink/50">Mark all read</button>
+                        <button onClick={() => void markAllRead()} className="text-sm text-ink/50">
+                          Mark all read
+                        </button>
                       </div>
                       <div className="mt-2 max-h-64 overflow-auto">
-                        {notifications.length === 0 && <p className="text-sm text-ink/60">No notifications</p>}
+                        {notifications.length === 0 && (
+                          <p className="text-sm text-ink/60">No notifications</p>
+                        )}
                         {notifications.map((n) => (
-                          <div key={n.id} className={`mt-2 flex items-start gap-3 rounded p-2 ${n.is_read ? "bg-ivory" : "bg-ivory-deep/5"}`}>
+                          <div
+                            key={n.id}
+                            className={`mt-2 flex items-start gap-3 rounded p-2 ${n.is_read ? "bg-ivory" : "bg-ivory-deep/5"}`}
+                          >
                             <div className="mt-1">
-                              {n.is_read ? <Check className="size-4 text-verified" /> : <XCircle className="size-4 text-saffron" />}
+                              {n.is_read ? (
+                                <Check className="size-4 text-verified" />
+                              ) : (
+                                <XCircle className="size-4 text-saffron" />
+                              )}
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-medium">{n.title}</p>
                               <p className="text-xs text-ink/60">{n.body}</p>
                               <div className="mt-1 flex gap-2 text-xs">
-                                <button onClick={() => void markAsRead(n.id)} className="text-ink/50">Mark read</button>
-                                {n.data?.scheme_id && <a href={`/scheme/${n.data.scheme_id}`} className="text-saffron">View</a>}
+                                <button
+                                  onClick={() => void markAsRead(n.id)}
+                                  className="text-ink/50"
+                                >
+                                  Mark read
+                                </button>
+                                {n.data?.scheme_id && (
+                                  <a href={`/scheme/${n.data.scheme_id}`} className="text-saffron">
+                                    View
+                                  </a>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -180,12 +242,33 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
                   )}
                 </div>
 
-                <Link to="/dashboard" className={cn("eyebrow flex items-center gap-2", dark ? "text-ivory/75" : "text-ink/70")}><UserRound className="size-4 text-saffron" /> {clientUser.full_name.split(" ")[0]}</Link>
-                <button onClick={() => { signOut(); window.location.reload(); }} className={cn("eyebrow", dark ? "text-ivory/65" : "text-ink/60")}>LOG OUT</button>
+                <Link
+                  to="/dashboard"
+                  className={cn(
+                    "eyebrow flex items-center gap-2",
+                    dark ? "text-ivory/75" : "text-ink/70",
+                  )}
+                >
+                  <UserRound className="size-4 text-saffron" /> {clientUser.full_name.split(" ")[0]}
+                </Link>
+                <button
+                  onClick={() => {
+                    signOut();
+                    window.location.reload();
+                  }}
+                  className={cn("eyebrow", dark ? "text-ivory/65" : "text-ink/60")}
+                >
+                  LOG OUT
+                </button>
               </>
-
             ) : (
-              <Link to="/login" search={{ redirect: "/dashboard" }} className="eyebrow text-saffron">LOGIN / CREATE ACCOUNT</Link>
+              <Link
+                to="/login"
+                search={{ redirect: "/dashboard" }}
+                className="eyebrow text-saffron"
+              >
+                LOGIN / CREATE ACCOUNT
+              </Link>
             )}
           </div>
 
@@ -216,7 +299,10 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
               {LINKS.map((l, i) => (
                 <motion.div
                   key={l.label}
-                  onClick={() => { setOpen(false); void navigate({ to: l.to }); }}
+                  onClick={() => {
+                    setOpen(false);
+                    void navigate({ to: l.to });
+                  }}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.18 + i * 0.07, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}

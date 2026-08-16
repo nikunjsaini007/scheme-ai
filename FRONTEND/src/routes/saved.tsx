@@ -25,7 +25,10 @@ function Saved() {
 
   // Simple persisted saved IDs using localStorage
   const [savedIds, setSavedIds] = useState<string[]>([]);
-  useEffect(() => setSavedIds(JSON.parse(localStorage.getItem("savedSchemeIds") || "[]") as string[]), []);
+  useEffect(
+    () => setSavedIds(JSON.parse(localStorage.getItem("savedSchemeIds") || "[]") as string[]),
+    [],
+  );
   const savedSchemes = schemes.filter((s) => savedIds.includes(s.id));
   const toggleSave = (id: string) => {
     const exists = savedIds.includes(id);

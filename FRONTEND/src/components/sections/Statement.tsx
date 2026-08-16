@@ -26,7 +26,9 @@ export function Statement() {
             </Reveal>
             <Reveal delay={0.15}>
               <p className="mt-6 max-w-sm text-sm leading-relaxed text-ink/55">
-                {t("Eligibility is buried in circulars, income slabs, state notifications and PDFs. Most people never find out what was already meant for them.")}
+                {t(
+                  "Eligibility is buried in circulars, income slabs, state notifications and PDFs. Most people never find out what was already meant for them.",
+                )}
               </p>
             </Reveal>
           </div>

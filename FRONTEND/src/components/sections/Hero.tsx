@@ -16,12 +16,32 @@ import womanEntrepreneur from "@/assets/woman-entreprenuer.jpeg";
 
 const HERO_SLIDES = [
   { image: narendraModi, label: "Public service and governance", alt: "Narendra Modi" },
-  { image: governmentSchemes, label: "Government schemes for every stage of life", alt: "Government of India schemes" },
-  { image: youthTech, label: "Youth, skills and opportunity", alt: "Young people using technology" },
-  { image: educationTech, label: "Education and digital learning", alt: "Modern education technology" },
+  {
+    image: governmentSchemes,
+    label: "Government schemes for every stage of life",
+    alt: "Government of India schemes",
+  },
+  {
+    image: youthTech,
+    label: "Youth, skills and opportunity",
+    alt: "Young people using technology",
+  },
+  {
+    image: educationTech,
+    label: "Education and digital learning",
+    alt: "Modern education technology",
+  },
   { image: modernFamily, label: "Family welfare and support", alt: "A modern Indian family" },
-  { image: healthcareTech, label: "Healthcare access for everyone", alt: "Modern healthcare technology" },
-  { image: womanEntrepreneur, label: "Women and entrepreneurship", alt: "An Indian woman entrepreneur" },
+  {
+    image: healthcareTech,
+    label: "Healthcare access for everyone",
+    alt: "Modern healthcare technology",
+  },
+  {
+    image: womanEntrepreneur,
+    label: "Women and entrepreneurship",
+    alt: "An Indian woman entrepreneur",
+  },
 ];
 
 export function Hero() {
@@ -34,10 +54,14 @@ export function Hero() {
   const { t } = useT();
   const [slide, setSlide] = useState(0);
   useEffect(() => {
-    const timer = window.setInterval(() => setSlide((current) => (current + 1) % HERO_SLIDES.length), 5000);
+    const timer = window.setInterval(
+      () => setSlide((current) => (current + 1) % HERO_SLIDES.length),
+      5000,
+    );
     return () => window.clearInterval(timer);
   }, []);
-  const previousSlide = () => setSlide((current) => (current - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  const previousSlide = () =>
+    setSlide((current) => (current - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
   const nextSlide = () => setSlide((current) => (current + 1) % HERO_SLIDES.length);
   const activeSlide = HERO_SLIDES[slide]!;
 
@@ -52,7 +76,6 @@ export function Hero() {
       />
 
       <div className="edge relative grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-6">
-       
         <motion.div style={{ y: headY }} className="lg:col-span-7 lg:pt-6">
           <Reveal delay={0.1}>
             <p className="eyebrow mb-8 text-ink/45">
@@ -64,7 +87,13 @@ export function Hero() {
             as="h1"
             delay={0.15}
             className="display text-[16vw] leading-[0.82] sm:text-[13vw] lg:text-[9.2vw]"
-            lines={[t("Find the"), <span key="b" className="hero-benefit">{t("Benefits")}</span>, t("you deserve.")]}
+            lines={[
+              t("Find the"),
+              <span key="b" className="hero-benefit">
+                {t("Benefits")}
+              </span>,
+              t("you deserve."),
+            ]}
           />
 
           <Reveal delay={0.7} className="mt-9 max-w-md">
@@ -76,13 +105,18 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={0.85} className="mt-10 flex flex-wrap items-center gap-3">
-            <Link to="/personalize" className="rounded-full bg-ink px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-saffron">
+            <Link
+              to="/personalize"
+              className="rounded-full bg-ink px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-saffron"
+            >
               {t("Check what I qualify for")}
             </Link>
-            <Link to="/schemes" className="rounded-full border border-ink/25 px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-saffron hover:text-saffron">
+            <Link
+              to="/schemes"
+              className="rounded-full border border-ink/25 px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-saffron hover:text-saffron"
+            >
               {t("Explore schemes")}
             </Link>
-  
           </Reveal>
         </motion.div>
 
@@ -111,8 +145,20 @@ export function Hero() {
             <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-ink/70 to-transparent p-5 pt-24 text-white">
               <p className="eyebrow text-white/80">{t(activeSlide.label)}</p>
               <div className="flex gap-2">
-                <button onClick={previousSlide} className="grid size-9 place-items-center rounded-full border border-white/40 bg-ink/20 backdrop-blur-sm hover:bg-saffron" aria-label={t("Previous image")}><ChevronLeft className="size-4" /></button>
-                <button onClick={nextSlide} className="grid size-9 place-items-center rounded-full border border-white/40 bg-ink/20 backdrop-blur-sm hover:bg-saffron" aria-label={t("Next image")}><ChevronRight className="size-4" /></button>
+                <button
+                  onClick={previousSlide}
+                  className="grid size-9 place-items-center rounded-full border border-white/40 bg-ink/20 backdrop-blur-sm hover:bg-saffron"
+                  aria-label={t("Previous image")}
+                >
+                  <ChevronLeft className="size-4" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="grid size-9 place-items-center rounded-full border border-white/40 bg-ink/20 backdrop-blur-sm hover:bg-saffron"
+                  aria-label={t("Next image")}
+                >
+                  <ChevronRight className="size-4" />
+                </button>
               </div>
             </div>
           </motion.div>
@@ -132,7 +178,10 @@ export function Hero() {
             </div>
           </motion.div>
 
-          <div className="absolute bottom-[-5.5rem] left-1/2 flex -translate-x-1/2 gap-1.5" aria-label={t("Hero image selector")}>
+          <div
+            className="absolute bottom-[-5.5rem] left-1/2 flex -translate-x-1/2 gap-1.5"
+            aria-label={t("Hero image selector")}
+          >
             {HERO_SLIDES.map((item, index) => (
               <button
                 key={item.alt}

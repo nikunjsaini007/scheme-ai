@@ -39,10 +39,15 @@ export function WhoAreYou() {
       <SectionLabel index="01" title={t("Personalization")} />
       <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
-          <LineReveal className="display text-[18vw] leading-[0.84] lg:text-[8vw]" lines={[t("Who"), t("are"), t("you?")]} />
+          <LineReveal
+            className="display text-[18vw] leading-[0.84] lg:text-[8vw]"
+            lines={[t("Who"), t("are"), t("you?")]}
+          />
           <Reveal delay={0.2}>
             <p className="mt-8 max-w-xs text-sm leading-relaxed text-ink/55">
-              {t("Pick the life you're living. We'll narrow thousands of schemes down to the ones written for people like you.")}
+              {t(
+                "Pick the life you're living. We'll narrow thousands of schemes down to the ones written for people like you.",
+              )}
             </p>
           </Reveal>
         </div>
@@ -66,7 +71,9 @@ export function WhoAreYou() {
                   )}
                 >
                   <Icon className="h-6 w-6" strokeWidth={1.4} />
-                  <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">{t(p.label)}</span>
+                  <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">
+                    {t(p.label)}
+                  </span>
                 </motion.button>
               );
             })}
@@ -98,7 +105,9 @@ export function WhoAreYou() {
                     </motion.li>
                   ))}
                 </ul>
-                <p className="mt-6 text-[11px] text-ivory/40">{t("Indicative categories, not a decision.")}</p>
+                <p className="mt-6 text-[11px] text-ivory/40">
+                  {t("Indicative categories, not a decision.")}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>

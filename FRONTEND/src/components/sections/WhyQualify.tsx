@@ -25,7 +25,9 @@ export function WhyQualify() {
           />
           <Reveal delay={0.35}>
             <p className="mt-8 max-w-sm text-sm leading-relaxed text-ink/55">
-              {t("Every match is shown alongside the criteria it was measured against — including the ones you don't clear yet.")}
+              {t(
+                "Every match is shown alongside the criteria it was measured against — including the ones you don't clear yet.",
+              )}
             </p>
           </Reveal>
         </div>
@@ -34,7 +36,9 @@ export function WhyQualify() {
           <Reveal>
             <div className="bg-white p-7 md:p-10">
               <div className="flex items-baseline justify-between">
-                <span className="eyebrow text-saffron">{scheme.match}% {t("match")}</span>
+                <span className="eyebrow text-saffron">
+                  {scheme.match}% {t("match")}
+                </span>
                 <span className="eyebrow text-ink/40">{t(scheme.level)}</span>
               </div>
               <h3 className="display mt-4 text-3xl md:text-5xl">{t(scheme.name)}</h3>
@@ -55,7 +59,9 @@ export function WhyQualify() {
                       <TriangleAlert className="size-4 shrink-0 text-saffron" strokeWidth={2.2} />
                     )}
                     <span className={c.ok ? "text-ink/80" : "text-saffron"}>{t(c.label)}</span>
-                    <span className="eyebrow ml-auto text-ink/35">{c.ok ? t("Met") : t("Action needed")}</span>
+                    <span className="eyebrow ml-auto text-ink/35">
+                      {c.ok ? t("Met") : t("Action needed")}
+                    </span>
                   </motion.li>
                 ))}
               </ul>
