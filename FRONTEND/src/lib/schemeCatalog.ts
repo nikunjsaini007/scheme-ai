@@ -1,4 +1,6 @@
 import { supabase } from "@/supabase";
+import { isDemoMode } from "./demoConfig";
+import { demoSchemes, type DemoScheme } from "@/data/demoSchemes";
 
 export type SchemeRecord = {
   id: string;
@@ -15,7 +17,29 @@ export type SchemeRecord = {
   status: "active" | "current" | "inactive";
   last_verified_at: string;
   source_url: string;
+  is_demo?: boolean;
 };
+
+// Convert demo scheme to SchemeRecord format
+function demoSchemeToRecord(scheme: DemoScheme): SchemeRecord {
+  return {
+    id: scheme.id,
+    name: scheme.name,
+    description: scheme.description,
+    ministry: "Yojantra Demo",
+    category: scheme.category,
+    level: scheme.level,
+    state: scheme.states[0] === "all" ? null : scheme.states[0],
+    benefits: scheme.benefits,
+    eligibility: scheme.eligibility,
+    documents_required: scheme.documents_required,
+    application_url: scheme.application_url || "",
+    status: "active",
+    last_verified_at: new Date().toISOString(),
+    source_url: scheme.source_url || "",
+    is_demo: true,
+  };
+}
 
 export type NormalizedUserProfile = Record<string, unknown> & {
   id: string;
@@ -57,8 +81,13 @@ const safeArray = (value: unknown) =>
     ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
     : [];
 
-export async function fetchActiveSchemes() {
-  // Primary query: follow expected status values
+export async function fetchActiveSchemes(): Promise<SchemeRecord[]> {
+  // Demo mode: return local demo data
+  if (isDemoMode()) {
+    return demoSchemes.map(demoSchemeToRecord);
+  }
+
+  // Production mode: query Supabase
   const primary = await supabase
     .from("schemes")
     .select("*")
@@ -66,13 +95,11 @@ export async function fetchActiveSchemes() {
     .order("last_verified_at", { ascending: false });
 
   if (primary.error) {
-    // Surface the error to the caller so UI can display it
     throw new Error(primary.error.message || "Failed to load schemes");
   }
 
   let data = primary.data || [];
 
-  // If primary returned no rows, try a permissive fallback that selects any non-inactive schemes.
   if (Array.isArray(data) && data.length === 0) {
     const fallback = await supabase
       .from("schemes")
@@ -80,7 +107,6 @@ export async function fetchActiveSchemes() {
       .neq("status", "inactive")
       .order("last_verified_at", { ascending: false });
     if (fallback.error) {
-      // If fallback also errors, throw the original primary error message (if any) or the fallback message
       throw new Error(fallback.error.message || "Failed to load schemes (fallback)");
     }
     data = fallback.data || [];

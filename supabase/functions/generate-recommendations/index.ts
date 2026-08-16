@@ -364,7 +364,7 @@ Deno.serve(async (request) => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const apiKey = Deno.env.get("GEMINI_API_KEY");
-  const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
+  const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
   if (!token || !supabaseUrl || !anonKey)
     return response({ success: false, error: "Recommendation service is not configured" }, 503);
 
@@ -567,7 +567,6 @@ Return ONLY JSON:
             headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
             body: JSON.stringify({
               contents: [{ role: "user", parts: [{ text: discoveryPrompt }] }],
-              tools: [{ google_search: {} }],
               generationConfig: { temperature: 0.1, responseMimeType: "application/json" },
             }),
             signal: controller.signal,
@@ -665,8 +664,7 @@ Return ONLY JSON:
         category: candidate.category,
         short_description: candidate.description,
         match_score: score,
-        match_band:
-          score >= 90 ? "strong" : score >= 75 ? "good" : score >= 60 ? "possible" : "low",
+        match_band: score >= 90 ? "strong" : score >= 75 ? "good" : "possible",
         why_matches: uniqueStrings([
           ...(evalResult.reasons || []),
           ...(geminiRanking?.why_matches || []),
@@ -676,7 +674,7 @@ Return ONLY JSON:
           ...(geminiRanking?.missing_requirements || []),
         ]).slice(0, 6),
         eligibility_summary: uniqueStrings([
-          ...(evalResult.blockers || []),
+          ...(evalResult.blockers || []).map((b) => b.replace(/^\[[^\]]+\]\s*/, "")),
           ...(geminiRanking?.eligibility_summary || []),
         ]).slice(0, 8),
         benefits: uniqueStrings([

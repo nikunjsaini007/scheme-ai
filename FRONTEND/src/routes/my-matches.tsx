@@ -14,6 +14,37 @@ import {
 import { requireAuth } from "@/components/AuthGuard";
 import { supabase } from "@/supabase";
 import { getScheme } from "@/data/schemes";
+import { isDemoMode } from "@/lib/demoConfig";
+import { generateDemoRecommendations } from "@/lib/demoRecommendations";
+import type { DemoRecommendation } from "@/lib/demoRecommendations";
+
+// Convert demo recommendation to RecommendationRecord format
+function demoToRecommendationRecord(demo: DemoRecommendation): RecommendationRecord {
+  return {
+    id: `demo-${demo.scheme_id}`,
+    scheme_id: demo.scheme_id,
+    scheme_name: demo.scheme_name,
+    ministry_or_department: "Yojantra Demo",
+    government_level: "Central",
+    state: null,
+    category: demo.category,
+    short_description: demo.scheme_name,
+    match_score: demo.match_score,
+    match_band: demo.match_band,
+    why_matches: demo.why_matches,
+    missing_requirements: demo.missing_requirements,
+    eligibility_summary: demo.eligibility_summary,
+    benefits: demo.benefits,
+    required_documents: demo.required_documents,
+    application_process: [],
+    official_application_url: demo.application_url || "",
+    official_source_url: demo.source_url || "",
+    status: "active",
+    last_verified_at: new Date().toISOString(),
+    confidence_score: demo.match_score / 100,
+    generated_at: new Date().toISOString(),
+  };
+}
 
 const FILTERS = [
   "All",
@@ -68,6 +99,39 @@ function MyMatches() {
       setError("");
       setNotice("");
       try {
+        // Demo mode: use local demo recommendations
+        if (isDemoMode()) {
+          setGenerating(true);
+          setPhaseIndex(0);
+
+          // Simulate brief loading for UX
+          await new Promise((resolve) => setTimeout(resolve, 800));
+
+          // Get user profile from localStorage
+          const userProfile = {
+            age: user.age,
+            gender: user.gender,
+            state: user.state,
+            district: user.district,
+            occupation: user.occupation,
+            annual_income: user.annual_income,
+            education_level: user.education_level,
+            category: user.category,
+            is_student: user.is_student,
+            disability_status: user.disability_status,
+            marital_status: user.marital_status,
+          };
+
+          const demoRecs = generateDemoRecommendations(userProfile);
+          const annotated = demoRecs.map(demoToRecommendationRecord);
+          setRecommendations(annotated);
+          setGenerating(false);
+          setLoading(false);
+          inFlight.current = false;
+          return;
+        }
+
+        // Production mode: use Supabase
         let rows = await fetchRecommendations(user.id);
         const { data: savedRows } = await supabase
           .from("saved_schemes")
@@ -237,6 +301,16 @@ function MyMatches() {
   );
   const toggleSave = async (id: string) => {
     if (!user) return;
+
+    // Demo mode: just toggle local state
+    if (isDemoMode()) {
+      setSavedIds((current) =>
+        current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
+      );
+      return;
+    }
+
+    // Production mode: use Supabase
     const isSaved = savedIds.includes(id);
     const result = isSaved
       ? await supabase.from("saved_schemes").delete().eq("user_id", user.id).eq("scheme_id", id)
@@ -280,6 +354,15 @@ function MyMatches() {
         <div className="max-w-3xl">
           <h1 className="display text-4xl">Your Scheme Matches</h1>
           <p className="mt-3 text-sm text-ink/60">Government schemes matched to your profile</p>
+          {isDemoMode() && (
+            <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-4">
+              <p className="text-sm text-amber-800">
+                <strong>Demo Mode:</strong> These are sample recommendations using demo scheme data.
+                The matching logic uses your real profile, but the schemes shown are for
+                demonstration purposes only.
+              </p>
+            </div>
+          )}
         </div>
       </section>
       <section className="edge py-8 md:py-16">
@@ -491,6 +574,11 @@ function RecommendationCard({
             <span className="eyebrow text-saffron">
               {score === null ? "Match score unavailable" : `${Math.round(score)}% · ${band}`}
             </span>
+            {isDemoMode() && (
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 uppercase">
+                DEMO
+              </span>
+            )}
             {best && (
               <span className="ml-2 rounded-full bg-verified/10 px-2 py-1 text-[11px] font-medium text-verified">
                 Best Match

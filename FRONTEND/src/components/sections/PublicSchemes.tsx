@@ -4,6 +4,7 @@ import { ArrowRight, ChevronDown, ExternalLink, Search } from "lucide-react";
 import { motion } from "motion/react";
 import { LineReveal, Reveal, SectionLabel } from "@/components/motion-primitives";
 import { fetchActiveSchemes, type SchemeRecord } from "@/lib/schemeCatalog";
+import { isDemoMode } from "@/lib/demoConfig";
 
 const INITIAL_COUNT = 6;
 const PAGE_SIZE = 12;
@@ -226,6 +227,11 @@ export function PublicSchemes() {
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="eyebrow text-saffron">{scheme.level} scheme</span>
+                  {isDemoMode() && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 uppercase">
+                      DEMO
+                    </span>
+                  )}
                   <span className="eyebrow text-ink/35">{scheme.status}</span>
                 </div>
                 <p className="eyebrow mt-8 text-ink/40">{scheme.category}</p>

@@ -44,36 +44,43 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
 
   useEffect(() => {
     let mounted = true;
+    let notificationsAvailable = true; // Track if notifications table exists
+
     const loadNotifications = async () => {
       const user = getUser();
-      if (!user) return;
+      if (!user || !notificationsAvailable) return;
+
       try {
         const { data, error } = await supabase
-          .from("inbox_entries")
+          .from("notifications")
           .select("*")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(20);
+
         if (error) {
-          // treat missing table or other errors as empty inbox
-          console.error("Inbox fetch failed:", error);
+          // If table doesn't exist, stop trying for this session
+          if (error.message?.includes("does not exist") || error.code === "42P01") {
+            notificationsAvailable = false;
+          }
+          // Gracefully handle all notification errors
           if (!mounted) return;
           setNotifications([]);
           setUnreadCount(0);
           return;
         }
+
         if (!mounted) return;
         setNotifications((data as any) || []);
-        setUnreadCount(
-          ((data as any) || []).filter((n: any) => !n.is_read && n.is_read !== true).length,
-        );
+        setUnreadCount(((data as any) || []).filter((n: any) => !n.read && n.read !== true).length);
       } catch (e) {
-        console.error("Inbox fetch failed:", e);
+        // Gracefully handle all errors without logging
         if (!mounted) return;
         setNotifications([]);
         setUnreadCount(0);
       }
     };
+
     loadNotifications();
     const sub = setInterval(loadNotifications, 60 * 1000);
     return () => {
@@ -84,8 +91,8 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
 
   const markAsRead = async (id: string) => {
     try {
-      await supabase.from("inbox_entries").update({ is_read: true }).eq("id", id);
-      setNotifications((cur) => cur.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
+      await supabase.from("notifications").update({ read: true }).eq("id", id);
+      setNotifications((cur) => cur.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setUnreadCount((c) => Math.max(0, c - 1));
     } catch (e) {}
   };
@@ -94,11 +101,11 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
     if (!user) return;
     try {
       await supabase
-        .from("inbox_entries")
-        .update({ is_read: true })
+        .from("notifications")
+        .update({ read: true })
         .eq("user_id", user.id)
-        .eq("is_read", false);
-      setNotifications((cur) => cur.map((n) => ({ ...n, is_read: true })));
+        .eq("read", false);
+      setNotifications((cur) => cur.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (e) {}
   };
@@ -209,10 +216,10 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
                         {notifications.map((n) => (
                           <div
                             key={n.id}
-                            className={`mt-2 flex items-start gap-3 rounded p-2 ${n.is_read ? "bg-ivory" : "bg-ivory-deep/5"}`}
+                            className={`mt-2 flex items-start gap-3 rounded p-2 ${n.read ? "bg-ivory" : "bg-ivory-deep/5"}`}
                           >
                             <div className="mt-1">
-                              {n.is_read ? (
+                              {n.read ? (
                                 <Check className="size-4 text-verified" />
                               ) : (
                                 <XCircle className="size-4 text-saffron" />
@@ -220,7 +227,7 @@ export function Nav({ dark: darkProp = false }: { dark?: boolean }) {
                             </div>
                             <div className="flex-1">
                               <p className="text-sm font-medium">{n.title}</p>
-                              <p className="text-xs text-ink/60">{n.body}</p>
+                              <p className="text-xs text-ink/60">{n.message}</p>
                               <div className="mt-1 flex gap-2 text-xs">
                                 <button
                                   onClick={() => void markAsRead(n.id)}
