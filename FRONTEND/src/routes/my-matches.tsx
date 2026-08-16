@@ -17,6 +17,7 @@ import { getScheme } from "@/data/schemes";
 import { isDemoMode } from "@/lib/demoConfig";
 import { generateDemoRecommendations } from "@/lib/demoRecommendations";
 import type { DemoRecommendation } from "@/lib/demoRecommendations";
+import { SchemeDetailModal } from "@/components/SchemeDetailModal";
 
 // Convert demo recommendation to RecommendationRecord format
 function demoToRecommendationRecord(demo: DemoRecommendation): RecommendationRecord {
@@ -560,6 +561,7 @@ function RecommendationCard({
       : `⚪ No fixed deadline announced`;
 
   const [showDetails, setShowDetails] = useState(false);
+  const [schemeModalOpen, setSchemeModalOpen] = useState(false);
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -701,27 +703,38 @@ function RecommendationCard({
       </div>
 
       <div className="mt-auto flex flex-wrap items-center gap-4 pt-7">
-        <a
-          href={item.official_application_url}
-          target="_blank"
-          rel="noreferrer"
+        <button
+          onClick={() => setSchemeModalOpen(true)}
           className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-3 text-[10px] font-semibold tracking-[.14em] text-ivory uppercase"
         >
           Apply Officially <ArrowRight className="size-3" />
-        </a>
-        <a
-          href={item.official_source_url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-[10px] font-semibold tracking-[.14em] uppercase hover:text-saffron"
-        >
-          View Full Details
-        </a>
+        </button>
+        
       </div>
 
       <p className="mt-5 text-[10px] text-ink/40">
         {item.status} · Verified {new Date(item.last_verified_at).toLocaleDateString()}
       </p>
+      <SchemeDetailModal
+        open={schemeModalOpen}
+        onOpenChange={setSchemeModalOpen}
+        scheme={{
+          id: item.scheme_id,
+          name: item.scheme_name,
+          summary: item.short_description,
+          benefit: item.benefits[0],
+          category: item.category,
+          level: item.government_level,
+          match: item.match_score,
+          whoCanApply: item.why_matches,
+          whatYouGet: item.benefits,
+          documents_required: item.required_documents,
+          howToApply: item.application_process,
+          official_application_url: item.official_application_url,
+          official_source_url: item.official_source_url,
+          is_demo: isDemoMode(),
+        }}
+      />
     </motion.article>
   );
 }

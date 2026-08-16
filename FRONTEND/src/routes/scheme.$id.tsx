@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { LineReveal, Reveal } from "@/components/motion-primitives";
 import { getScheme, LAST_VERIFIED, type Scheme } from "@/data/schemes";
 import { useT } from "@/lib/i18n";
+import { SchemeDetailModal } from "@/components/SchemeDetailModal";
 
 export const Route = createFileRoute("/scheme/$id")({
   loader: ({ params }) => {
@@ -39,6 +40,7 @@ function SchemeDetail() {
   const { scheme } = Route.useLoaderData() as { scheme: Scheme };
   const [open, setOpen] = useState<string | null>(null);
   const { t } = useT();
+  const [schemeModalOpen, setSchemeModalOpen] = useState(false);
 
   return (
     <main className="overflow-x-hidden bg-ivory text-ink">
@@ -261,12 +263,12 @@ function SchemeDetail() {
             <div className="bg-white p-8">
               <p className="eyebrow text-ink/40">{t("Official source")}</p>
               <p className="mt-3 text-lg leading-snug">{scheme.source}</p>
-              <a
-                href="#apply"
+              <button
+                onClick={() => setSchemeModalOpen(true)}
                 className="mt-6 inline-flex items-center gap-2 border-b border-ink pb-1 text-[11px] font-semibold tracking-[0.16em] uppercase hover:border-saffron hover:text-saffron"
               >
                 {t("Go to official portal")} <ExternalLink className="size-3.5" />
-              </a>
+              </button>
               <div className="mt-8 border-t border-ink/12 pt-6">
                 <p className="eyebrow text-ink/40">{t("Last verified")}</p>
                 <p className="display mt-2 text-2xl">{LAST_VERIFIED}</p>
@@ -282,6 +284,7 @@ function SchemeDetail() {
       </section>
 
       <Footer />
+      <SchemeDetailModal open={schemeModalOpen} onOpenChange={setSchemeModalOpen} scheme={scheme} />
     </main>
   );
 }

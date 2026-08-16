@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { LineReveal, Reveal, SectionLabel } from "@/components/motion-primitives";
 import { fetchActiveSchemes, type SchemeRecord } from "@/lib/schemeCatalog";
 import { isDemoMode } from "@/lib/demoConfig";
+import { SchemeDetailModal } from "@/components/SchemeDetailModal";
 
 const INITIAL_COUNT = 6;
 const PAGE_SIZE = 12;
@@ -47,6 +48,9 @@ export function PublicSchemes() {
   const [expanded, setExpanded] = useState(false);
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [schemeModalOpen, setSchemeModalOpen] = useState(false);
+  const [selectedScheme, setSelectedScheme] = useState<SchemeRecord | null>(null);
+  const [portalModalOpen, setPortalModalOpen] = useState(false);
 
   useEffect(() => {
     void fetchActiveSchemes()
@@ -257,32 +261,18 @@ export function PublicSchemes() {
                 </dl>
                 <div className="mt-auto flex items-center justify-between pt-7">
                   <div className="flex flex-wrap items-center gap-4">
-                    <a
-                      href={scheme.application_url}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      onClick={() => {
+                        setSelectedScheme(scheme);
+                        setSchemeModalOpen(true);
+                      }}
                       className="inline-flex items-center gap-2 border-b border-ink pb-1 text-[10px] font-semibold tracking-[.16em] uppercase hover:border-saffron hover:text-saffron"
                     >
                       View Details <ArrowRight className="size-3" />
-                    </a>
-                    <a
-                      href={scheme.application_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[10px] font-semibold tracking-[.14em] text-ink/45 uppercase hover:text-saffron"
-                    >
-                      Official Website
-                    </a>
+                    </button>
+                  
                   </div>
-                  <a
-                    href={scheme.source_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Official source for ${scheme.name}`}
-                    className="text-ink/40 hover:text-saffron"
-                  >
-                    <ExternalLink className="size-4" />
-                  </a>
+              
                 </div>
               </motion.article>
             ))}
@@ -325,6 +315,11 @@ export function PublicSchemes() {
           )}
         </>
       )}
+      <SchemeDetailModal
+        open={schemeModalOpen}
+        onOpenChange={setSchemeModalOpen}
+        scheme={selectedScheme}
+      />
     </section>
   );
 }

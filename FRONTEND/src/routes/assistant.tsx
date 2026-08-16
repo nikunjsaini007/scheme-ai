@@ -1,6 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useRef, useEffect, type FormEvent } from "react";
-import { ArrowRight, ChevronRight, Mic, RotateCcw, Send, Sparkles, UserRound } from "lucide-react";
+import { useState, useRef, useEffect, useCallback, type FormEvent } from "react";
+import {
+  ArrowRight,
+  ChevronRight,
+  Mic,
+  MicOff,
+  RotateCcw,
+  Send,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
@@ -13,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { askAntra } from "@/lib/antra";
 import { getUser } from "@/lib/auth";
 import { fetchUserProfile } from "@/lib/schemeCatalog";
+import { renderMarkdown } from "@/lib/renderMarkdown";
 
 type Message = { id: number; text: string; user: boolean };
 
@@ -21,6 +31,23 @@ const PROMPTS = [
   "What documents do I need?",
   "Am I eligible for healthcare support?",
 ];
+
+/** Map Yojantra preferred_language values to Web Speech API BCP-47 tags */
+const VOICE_LANG_MAP: Record<string, string> = {
+  english: "en-IN",
+  hindi: "hi-IN",
+  bengali: "bn-IN",
+  tamil: "ta-IN",
+  telugu: "te-IN",
+  marathi: "mr-IN",
+  gujarati: "gu-IN",
+  kannada: "kn-IN",
+  malayalam: "ml-IN",
+  punjabi: "pa-IN",
+  odia: "or-IN",
+  assamese: "as-IN",
+  urdu: "ur-IN",
+};
 
 export const Route = createFileRoute("/assistant")({
   head: () => ({
@@ -44,21 +71,242 @@ function Assistant() {
   const recognitionRef = useRef<any | null>(null);
   const [speakResponses, setSpeakResponses] = useState(true);
   const [speaking, setSpeaking] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState<boolean | null>(null); // null = not yet detected
+  const [voiceError, setVoiceError] = useState<string | null>(null);
 
-  const speakText = (text: string) => {
-    try {
-      if (!speakResponses) return;
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "en-IN";
-      utter.onstart = () => setSpeaking(true);
-      utter.onend = () => setSpeaking(false);
-      window.speechSynthesis.speak(utter);
-    } catch {
-      // silently fail; keep text assistant working
+  // Detect speech recognition support on client only
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    setVoiceSupported(!!SR);
+  }, []);
+
+  // Cleanup speech recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+        recognitionRef.current = null;
+      }
+    };
+  }, []);
+
+  // Clean markdown text for TTS - removes formatting symbols that would be spoken aloud
+  const cleanTextForSpeech = useCallback((text: string): string => {
+    return (
+      text
+        // Remove bold/italic markers
+        .replace(/\*\*(.+?)\*\*/g, "$1")
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "$1")
+        // Remove headings
+        .replace(/^#{1,6}\s+/gm, "")
+        // Remove code formatting
+        .replace(/`(.+?)`/g, "$1")
+        // Remove markdown links but keep the text
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        // Remove list markers at start of lines
+        .replace(/^[\s]*[-*+]\s+/gm, "")
+        .replace(/^[\s]*\d+\.\s+/gm, "")
+        // Replace multiple newlines with period+space for natural pauses
+        .replace(/\n{2,}/g, ". ")
+        .replace(/\n/g, ". ")
+        // Clean up multiple spaces
+        .replace(/\s{2,}/g, " ")
+        // Clean up multiple periods
+        .replace(/\.{2,}/g, ".")
+        .trim()
+    );
+  }, []);
+
+  // Voice selection state
+  const [preferredVoice, setPreferredVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
+
+  // Load and select preferred voice
+  useEffect(() => {
+    if (!("speechSynthesis" in window)) return;
+
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length === 0) return;
+
+      setVoicesLoaded(true);
+
+      // Get user's preferred language
+      const preferredLang = dbProfile?.preferred_language?.toLowerCase() || "english";
+      const langMap: Record<string, string[]> = {
+        english: ["en-IN", "en-US", "en-GB"],
+        hindi: ["hi-IN"],
+        bengali: ["bn-IN"],
+        tamil: ["ta-IN"],
+        telugu: ["te-IN"],
+        marathi: ["mr-IN"],
+        gujarati: ["gu-IN"],
+        kannada: ["kn-IN"],
+        malayalam: ["ml-IN"],
+        punjabi: ["pa-IN"],
+        odia: ["or-IN"],
+        assamese: ["as-IN"],
+        urdu: ["ur-IN"],
+      };
+
+      const preferredLangs = langMap[preferredLang] || ["en-IN", "en-US"];
+
+      // Female voice indicators — common in voice names across browsers/OSes
+      const isFemaleVoice = (v: SpeechSynthesisVoice): boolean => {
+        const name = v.name.toLowerCase();
+        return (
+          name.includes("female") ||
+          name.includes("samantha") ||
+          name.includes("karen") ||
+          name.includes("zira") ||
+          name.includes("hazel") ||
+          name.includes("susan") ||
+          name.includes("alice") ||
+          name.includes("anna") ||
+          name.includes("helena") ||
+          name.includes("milena") ||
+          name.includes("linda") ||
+          name.includes("monica") ||
+          name.includes("paulina") ||
+          name.includes("laura") ||
+          name.includes("fiona") ||
+          name.includes("veena") ||
+          name.includes("aditi")
+        );
+      };
+
+      // Find best matching voice with female preference
+      let selectedVoice: SpeechSynthesisVoice | null = null;
+
+      // 1. Female voice matching preferred language (local first)
+      for (const lang of preferredLangs) {
+        const langPrefix = lang.split("-")[0];
+        selectedVoice =
+          voices.find(
+            (v) => v.lang.startsWith(langPrefix) && v.localService && isFemaleVoice(v),
+          ) || null;
+        if (selectedVoice) break;
+      }
+
+      // 2. Female voice matching preferred language (any)
+      if (!selectedVoice) {
+        for (const lang of preferredLangs) {
+          const langPrefix = lang.split("-")[0];
+          selectedVoice =
+            voices.find((v) => v.lang.startsWith(langPrefix) && isFemaleVoice(v)) || null;
+          if (selectedVoice) break;
+        }
+      }
+
+      // 3. Any local voice for the preferred language
+      if (!selectedVoice) {
+        for (const lang of preferredLangs) {
+          const langPrefix = lang.split("-")[0];
+          selectedVoice =
+            voices.find((v) => v.lang.startsWith(langPrefix) && v.localService) || null;
+          if (selectedVoice) break;
+        }
+      }
+
+      // 4. Any voice for the preferred language
+      if (!selectedVoice) {
+        for (const lang of preferredLangs) {
+          const langPrefix = lang.split("-")[0];
+          selectedVoice = voices.find((v) => v.lang.startsWith(langPrefix)) || null;
+          if (selectedVoice) break;
+        }
+      }
+
+      // 5. Any female English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find((v) => v.lang.startsWith("en") && isFemaleVoice(v)) || null;
+      }
+
+      // 6. Any English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find((v) => v.lang.startsWith("en")) || null;
+      }
+
+      // 7. Final fallback to first available voice
+      if (!selectedVoice && voices.length > 0) {
+        selectedVoice = voices[0];
+      }
+
+      if (selectedVoice) {
+        setPreferredVoice(selectedVoice);
+      }
+    };
+
+    // Voices might not be immediately available
+    loadVoices();
+
+    // Handle voiceschanged event (fires when voices are loaded)
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [dbProfile?.preferred_language]);
+
+  // Get voice language for speech recognition (BCP-47 format)
+  const getVoiceLang = useCallback(() => {
+    const preferred = dbProfile?.preferred_language;
+    if (preferred && typeof preferred === "string") {
+      return VOICE_LANG_MAP[preferred.toLowerCase()] || "en-IN";
     }
-  };
+    return "en-IN";
+  }, [dbProfile]);
+
+  // Get voice language for TTS (uses voice's lang if available)
+  const getTTSLang = useCallback(() => {
+    if (preferredVoice) return preferredVoice.lang;
+    const preferred = dbProfile?.preferred_language;
+    if (preferred && typeof preferred === "string") {
+      return VOICE_LANG_MAP[preferred.toLowerCase()] || "en-IN";
+    }
+    return "en-IN";
+  }, [dbProfile, preferredVoice]);
+
+  const speakText = useCallback(
+    (text: string) => {
+      try {
+        if (!speakResponses) return;
+        if (!("speechSynthesis" in window)) return;
+
+        window.speechSynthesis.cancel();
+
+        const cleanText = cleanTextForSpeech(text);
+        if (!cleanText) return;
+
+        const utter = new SpeechSynthesisUtterance(cleanText);
+
+        // Use selected voice if available
+        if (preferredVoice) {
+          utter.voice = preferredVoice;
+          utter.lang = preferredVoice.lang;
+        } else {
+          utter.lang = getTTSLang();
+        }
+
+        // Natural speech settings
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
+        utter.volume = 1.0;
+
+        utter.onstart = () => setSpeaking(true);
+        utter.onend = () => setSpeaking(false);
+        utter.onerror = () => setSpeaking(false);
+
+        window.speechSynthesis.speak(utter);
+      } catch {
+        // silently fail; keep text assistant working
+      }
+    },
+    [speakResponses, preferredVoice, getTTSLang, cleanTextForSpeech],
+  );
 
   // Load authoritative profile on mount
   useEffect(() => {
@@ -148,9 +396,21 @@ function Assistant() {
   };
 
   const startListening = () => {
+    setVoiceError(null);
+
+    // Check for secure context (HTTPS or localhost) - required for SpeechRecognition in most browsers
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      setVoiceError(
+        t("Voice input requires a secure connection (HTTPS). Please use HTTPS or localhost."),
+      );
+      return;
+    }
+
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
-      alert(t("Voice input isn't supported in this browser."));
+      setVoiceError(
+        t("Voice input isn't supported in this browser. You can type your message instead."),
+      );
       return;
     }
     if (recognitionRef.current) {
@@ -160,29 +420,61 @@ function Assistant() {
       recognitionRef.current = null;
     }
     const recog = new SR();
-    recog.lang = "en-IN";
-    recog.interimResults = false;
+    recog.lang = getVoiceLang();
+    recog.continuous = false;
+    recog.interimResults = true;
     recog.maxAlternatives = 1;
+    let finalTranscript = "";
     recog.onresult = (ev: any) => {
-      const transcript = Array.from(ev.results)
-        .map((r: any) => r[0].transcript)
-        .join(" ")
-        .trim();
-      if (transcript) {
-        ask(transcript, true);
+      let interimTranscript = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const transcript = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) {
+          finalTranscript += transcript + " ";
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      // Show interim results in input for better UX
+      const displayText = finalTranscript + interimTranscript;
+      if (displayText.trim()) {
+        setInput((prev) => (prev ? prev + " " + displayText.trim() : displayText.trim()));
       }
     };
     recog.onend = () => {
       setListening(false);
       recognitionRef.current = null;
     };
-    recog.onerror = () => {
+    recog.onerror = (ev: any) => {
       setListening(false);
       recognitionRef.current = null;
+      const errType = ev.error;
+      if (errType === "not-allowed" || errType === "service-not-allowed") {
+        setVoiceError(
+          t(
+            "Microphone access was blocked. Please allow microphone access in your browser settings, then try again.",
+          ),
+        );
+      } else if (errType === "no-speech") {
+        setVoiceError(t("No speech detected. Try again when you're ready."));
+      } else if (errType === "network") {
+        setVoiceError(t("Network error. Please check your connection and try again."));
+      } else if (errType === "audio-capture") {
+        setVoiceError(t("No microphone found. Please connect a microphone and try again."));
+      } else if (errType === "bad-grammar") {
+        setVoiceError(t("Speech recognition grammar error. Please try again."));
+      } else if (errType !== "aborted") {
+        setVoiceError(t("Could not recognize speech. Please try again."));
+      }
     };
     recognitionRef.current = recog;
     setListening(true);
-    recog.start();
+    try {
+      recog.start();
+    } catch {
+      setListening(false);
+      setVoiceError(t("Could not start voice input. Please try again."));
+    }
   };
 
   const stopListening = () => {
@@ -193,6 +485,7 @@ function Assistant() {
       recognitionRef.current = null;
     }
     setListening(false);
+    setVoiceError(null);
   };
 
   return (
@@ -375,7 +668,14 @@ function Assistant() {
                         )}
                         {message.user ? t("You") : t("Antra")}
                       </div>
-                      {message.text}
+                      {message.user ? (
+                        message.text
+                      ) : (
+                        <div
+                          className="space-y-2 [&_ul]:list-inside [&_ul]:list-disc [&_ol]:list-inside [&_ol]:list-decimal [&_li]:ml-2 [&_p]:leading-relaxed [&_strong]:font-semibold [&_code]:rounded bg-ink/5 [&_code]:px-1 [&_code]:text-xs"
+                          dangerouslySetInnerHTML={{ __html: renderMarkdown(message.text) }}
+                        />
+                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -397,6 +697,7 @@ function Assistant() {
                     </span>
                   </motion.div>
                 )}
+                {voiceError && <p className="mt-2 text-xs text-saffron/80">{voiceError}</p>}
               </div>
               <div className="border-t border-ink/10 p-4">
                 <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
@@ -418,14 +719,28 @@ function Assistant() {
                     className="min-w-0 flex-1 rounded-full border border-ink/15 bg-ivory px-4 py-3 text-sm outline-none placeholder:text-ink/30 focus:border-saffron"
                   />
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => (listening ? stopListening() : startListening())}
-                      className={`size-10 place-items-center rounded-full border border-ink/15 ${listening ? "bg-saffron text-white" : "text-ink/40"} hover:border-saffron hover:text-saffron sm:grid`}
-                      aria-label={t("Voice input")}
-                    >
-                      <Mic className="size-4" />
-                    </button>
+                    {voiceSupported === false ? (
+                      <span
+                        className="size-10 place-items-center rounded-full border border-ink/15 text-ink/20 sm:grid"
+                        title={t("Voice input isn't supported in this browser")}
+                      >
+                        <MicOff className="size-4" />
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => (listening ? stopListening() : startListening())}
+                        className={cn(
+                          "size-10 place-items-center rounded-full border sm:grid",
+                          listening
+                            ? "border-saffron bg-saffron text-white animate-pulse"
+                            : "border-ink/15 text-ink/40 hover:border-saffron hover:text-saffron",
+                        )}
+                        aria-label={listening ? t("Stop listening") : t("Voice input")}
+                      >
+                        <Mic className="size-4" />
+                      </button>
+                    )}
 
                     <button
                       type="button"

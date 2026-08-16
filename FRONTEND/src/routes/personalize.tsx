@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { getUser, updateProfile } from "@/lib/auth";
 import { requireAuth } from "@/components/AuthGuard";
 import { fetchUserProfile, generateRecommendations } from "@/lib/schemeCatalog";
+import { normalizeDateForInput, parseDateFromInput } from "@/lib/utils";
 
 const incomeValue = (value: string) =>
   value.includes("Below")
@@ -68,7 +69,7 @@ function Personalize() {
   useEffect(() => {
     if (!dbProfile) return;
     setFullName(String(dbProfile.full_name || ""));
-    setDateOfBirth(String(dbProfile.date_of_birth || ""));
+    setDateOfBirth(normalizeDateForInput(dbProfile.date_of_birth));
     setGender(String(dbProfile.gender || ""));
     setDistrict(String(dbProfile.district || ""));
     setPincode(String(dbProfile.pincode || ""));
@@ -398,19 +399,28 @@ function Personalize() {
                         const val = e.target.value;
                         setDateOfBirth(val);
                         if (val) {
-                          const dob = new Date(val);
+                          const dob = parseDateFromInput(val);
                           const now = new Date();
                           let ageNum = now.getFullYear() - dob.getFullYear();
                           const m = now.getMonth() - dob.getMonth();
                           if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) ageNum -= 1;
                           answer("AGE", String(ageNum));
-                          setDbProfile((p: any) => ({ ...(p || {}), age: ageNum }));
+                          setDbProfile((p: any) => ({
+                            ...(p || {}),
+                            date_of_birth: val,
+                            age: ageNum,
+                          }));
                         } else {
                           answer("AGE", "");
-                          setDbProfile((p: any) => ({ ...(p || {}), age: null }));
+                          setDbProfile((p: any) => ({
+                            ...(p || {}),
+                            date_of_birth: null,
+                            age: null,
+                          }));
                         }
                       }}
                       className="mt-2 w-full rounded-md border border-ink/10 px-3 py-2 text-sm"
+                      max={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                   <div>

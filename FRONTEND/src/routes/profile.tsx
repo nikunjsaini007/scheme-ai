@@ -5,6 +5,7 @@ import { Nav } from "@/components/Nav";
 import { getUser, updateProfile, type User } from "@/lib/auth";
 import { fetchUserProfile } from "@/lib/schemeCatalog";
 import { requireAuth } from "@/components/AuthGuard";
+import { normalizeDateForInput } from "@/lib/utils";
 
 const states = [
   "Andhra Pradesh",
@@ -184,22 +185,26 @@ function Profile() {
   }, [user.id]);
   const set = (key: keyof User, value: string | number | null) =>
     setUser((current) => ({ ...current, [key]: value }));
-  const input = (key: keyof User, label: string, type = "text") => (
-    <label className="block text-sm">
-      {label}
-      <input
-        type={type}
-        value={String(user[key] ?? "")}
-        onChange={(e) =>
-          set(
-            key,
-            type === "number" ? (e.target.value ? Number(e.target.value) : null) : e.target.value,
-          )
-        }
-        className="mt-2 w-full rounded-lg border border-ink/15 bg-transparent px-4 py-3 outline-none focus:border-saffron"
-      />
-    </label>
-  );
+  const input = (key: keyof User, label: string, type = "text") => {
+    const value =
+      key === "date_of_birth" ? normalizeDateForInput(user[key]) : String(user[key] ?? "");
+    return (
+      <label className="block text-sm">
+        {label}
+        <input
+          type={type}
+          value={value}
+          onChange={(e) =>
+            set(
+              key,
+              type === "number" ? (e.target.value ? Number(e.target.value) : null) : e.target.value,
+            )
+          }
+          className="mt-2 w-full rounded-lg border border-ink/15 bg-transparent px-4 py-3 outline-none focus:border-saffron"
+        />
+      </label>
+    );
+  };
   const select = (key: keyof User, label: string, options: string[]) => (
     <label className="block text-sm">
       {label}
