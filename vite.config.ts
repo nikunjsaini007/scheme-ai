@@ -3,15 +3,14 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { nitro } from "nitro/vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   publicDir: "FRONTEND/public",
 
-  resolve: {
-    tsconfigPaths: true,
-  },
-
   plugins: [
+    tsconfigPaths(),
+
     tanstackStart({
       srcDirectory: "./FRONTEND/src",
       server: {
